@@ -6,15 +6,15 @@ Pod::Spec.new do |spec|
     spec.authors                  = ''
     spec.license                  = ''
     spec.summary                  = ''
-    spec.vendored_frameworks      = 'build/cocoapods/framework/firebase_ai_kmp.framework'
+    spec.vendored_frameworks      = 'build/cocoapods/framework/FirebaseAI.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '15.0'
     spec.dependency 'FirebaseAIBridge'
                 
-    if !Dir.exist?('build/cocoapods/framework/firebase_ai_kmp.framework') || Dir.empty?('build/cocoapods/framework/firebase_ai_kmp.framework')
+    if !Dir.exist?('build/cocoapods/framework/FirebaseAI.framework') || Dir.empty?('build/cocoapods/framework/FirebaseAI.framework')
         raise "
 
-        Kotlin framework 'firebase_ai_kmp' doesn't exist yet, so a proper Xcode project can't be generated.
+        Kotlin framework 'FirebaseAI' doesn't exist yet, so a proper Xcode project can't be generated.
         'pod install' should be executed after running ':generateDummyFramework' Gradle task:
 
             ./gradlew :firebase-ai-kmp:generateDummyFramework
@@ -28,7 +28,7 @@ Pod::Spec.new do |spec|
                 
     spec.pod_target_xcconfig = {
         'KOTLIN_PROJECT_PATH' => ':firebase-ai-kmp',
-        'PRODUCT_MODULE_NAME' => 'firebase_ai_kmp',
+        'PRODUCT_MODULE_NAME' => 'FirebaseAI',
     }
                 
     spec.script_phases = [
