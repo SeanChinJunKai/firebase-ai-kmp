@@ -1,6 +1,6 @@
 language = Objective-C
 
-headers = FirebaseAIBridge/FirebaseAIBridge-Swift.h
+headers = FirebaseAIBridge/FirebaseAIBridge-Swift.h UIKit/UIKit.h
 package = FirebaseAIBridge
 
 headerFilter = FirebaseAIBridge/*

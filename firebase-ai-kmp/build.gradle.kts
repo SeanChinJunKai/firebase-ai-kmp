@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
+    alias(libs.plugins.kotlinCocoapods)
 }
 
 group = "io.github.seanchinjunkai"
@@ -20,28 +21,19 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
+    iosArm64()
+    iosSimulatorArm64()
 
-    val xcf = XCFramework()
-    listOf(
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach {
-        it.binaries.framework {
-            baseName = "shared"
-            xcf.add(this)
+    cocoapods {
+        ios.deploymentTarget = libs.versions.ios.deploymentTarget.get()
+        framework {
+            baseName = "FirebaseAI" // Not FirebaseAIBridge due to ld: can't link a dylib with itself. same install_name as dylib being built
         }
-
-        val platform = when (it.targetName) {
-            "iosSimulatorArm64" -> "iphonesimulator"
-            "iosArm64" -> "iphoneos"
-            else -> error("Unsupported target $name")
-        }
-
-        it.compilations.getByName("main") {
-            cinterops.create("FirebaseAIBridge") {
-                definitionFile.set(project.file("src/nativeInterop/cinterop/FirebaseAIBridge.def"))
-                includeDirs.headerFilterOnly("$rootDir/FirebaseAIBridge/build/Release-$platform/include")
+        pod("FirebaseAIBridge") {
+            source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge") {
+                branch = "main"
             }
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
     }
 

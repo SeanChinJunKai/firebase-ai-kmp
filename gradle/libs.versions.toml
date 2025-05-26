@@ -1,11 +1,13 @@
 [versions]
 agp = "8.5.2"
-kotlin = "2.1.10"
+kotlin = "2.1.21"
 android-minSdk = "24"
 android-compileSdk = "34"
 firebase-bom = "33.14.0"
 kermit = "2.0.4"
 kotlinx-coroutines = "1.7.3"
+firebase-cocoapods = "11.4.0"
+ios-deploymentTarget = "15.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -19,3 +21,4 @@ kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core",
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.32.0" }
+kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }

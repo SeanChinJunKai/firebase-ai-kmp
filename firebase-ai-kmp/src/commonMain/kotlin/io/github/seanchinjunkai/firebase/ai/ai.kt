@@ -13,4 +13,6 @@ expect class FirebaseAI {
 expect class GenerativeModel {
 
     public suspend fun generateContent(prompt: String): String
+
+    public suspend fun generateContent(vararg prompt: PromptPart): String
 }
