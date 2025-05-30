@@ -39,10 +39,6 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidGenerativeModel.generateContent(prompt).text ?: "No content found"
     }
 
-    public actual suspend fun generateContentV2(prompt: String): String {
-        TODO("Not yet implemented")
-    }
-
     public actual suspend fun generateContent(vararg prompt: PromptPart): String {
         val content = content {
             prompt.map {

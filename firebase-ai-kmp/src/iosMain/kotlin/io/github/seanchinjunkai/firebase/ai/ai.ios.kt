@@ -44,25 +44,6 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
-    public actual suspend fun generateContentV2(prompt: String): String =
-        suspendCancellableCoroutine { continuation ->
-            iOSGenerativeModel.generateContentV2WithPrompt(
-                prompt,
-                completionHandler = { result: String?, error: NSError? ->
-                    val string: String = result ?: "No result"
-                    when {
-                        error != null -> continuation.resumeWithException(
-                            Exception(
-                                error.localizedDescription
-                            )
-                        )
-
-                        result != null -> continuation.resume(string)
-                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
-                    }
-                })
-        }
-
     public actual suspend fun generateContent(vararg prompt: PromptPart): String =
         suspendCancellableCoroutine { continuation ->
             val parts: List<PartObjc> = prompt.map { it.toPart() }

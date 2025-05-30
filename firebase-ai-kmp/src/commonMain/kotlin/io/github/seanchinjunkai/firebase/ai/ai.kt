@@ -14,7 +14,5 @@ expect class GenerativeModel {
 
     public suspend fun generateContent(prompt: String): String
 
-    public suspend fun generateContentV2(prompt: String): String
-
     public suspend fun generateContent(vararg prompt: PromptPart): String
 }
