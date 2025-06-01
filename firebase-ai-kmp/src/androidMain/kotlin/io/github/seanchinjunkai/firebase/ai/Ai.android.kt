@@ -1,6 +1,5 @@
 package io.github.seanchinjunkai.firebase.ai
 
-import android.graphics.Bitmap
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.FileDataPart
