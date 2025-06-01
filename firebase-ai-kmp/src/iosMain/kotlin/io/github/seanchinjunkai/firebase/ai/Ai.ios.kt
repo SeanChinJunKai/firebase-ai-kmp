@@ -30,8 +30,8 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
         suspendCancellableCoroutine { continuation ->
             iOSGenerativeModel.generateContentWithPrompt(
                 prompt,
-                completion = { result: String?, error: NSError? ->
-                    val string: String = result ?: "No result"
+                completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
+                    val string: String = result?.text() ?: "No result"
                     when {
                         error != null -> continuation.resumeWithException(
                             Exception(
@@ -49,8 +49,8 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
             val parts: List<PartObjc> = prompt.map { it.toPart() }
             iOSGenerativeModel.generateContentWithParts(
                 parts,
-                completion = { result: String?, error: NSError? ->
-                    val string: String = result ?: "No result"
+                completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
+                    val string: String = result?.text() ?: "No result"
                     when {
                         error != null -> continuation.resumeWithException(
                             Exception(
