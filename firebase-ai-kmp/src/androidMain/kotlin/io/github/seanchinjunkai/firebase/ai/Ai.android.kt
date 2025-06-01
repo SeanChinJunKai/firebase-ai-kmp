@@ -9,6 +9,7 @@ import com.google.firebase.ai.type.InlineDataPart
 import com.google.firebase.ai.type.Part
 import com.google.firebase.ai.type.TextPart
 import com.google.firebase.ai.type.content
+import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 
@@ -45,6 +46,19 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
             }
         }
         return androidGenerativeModel.generateContent(content).text ?: "No content found"
+    }
+
+    public actual suspend fun countTokens(prompt: String): CountTokensResponse {
+        return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
+    }
+
+    public actual suspend fun countTokens(vararg prompt: PromptPart): CountTokensResponse {
+        val content = content {
+            prompt.map {
+                part(it.toPart())
+            }
+        }
+        return androidGenerativeModel.countTokens(content).toCountTokensResponse()
     }
 }
 
