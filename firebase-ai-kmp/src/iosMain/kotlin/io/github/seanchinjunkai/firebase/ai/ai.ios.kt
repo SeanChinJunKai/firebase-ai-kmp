@@ -9,6 +9,7 @@ import platform.Foundation.NSNumber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import cocoapods.FirebaseAIBridge.*
+import io.github.seanchinjunkai.firebase.ai.type.Content
 
 
 public actual object Firebase {
@@ -44,9 +45,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
-    public actual suspend fun generateContent(vararg prompt: PromptPart): String =
+    public actual suspend fun generateContent(vararg prompt: Content): String =
         suspendCancellableCoroutine { continuation ->
-            val parts: List<PartObjc> = prompt.map { it.toPart() }
+            val input = prompt.map { it.toiOSContent() }.toTypedArray()
             iOSGenerativeModel.generateContentWithParts(
                 parts,
                 completion = { result: String?, error: NSError? ->
@@ -65,13 +66,19 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
         }
 }
 
+public fun Content.toiOSContent(): ModelContentObjc {
+    return ModelContentObjc(
+        this.role,
+        this.parts.map { it.toiOSPart() }
+    )
+}
 
-public fun PromptPart.toPart(): PartObjc {
+public fun Part.toiOSPart(): PartObjc {
     return when (this) {
-        is PromptPart.TextPart -> TextPartObjc(this.text)
-        is PromptPart.FileDataPart -> FileDataPartObjc(this.uri, this.mimeType)
-        is PromptPart.InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
-        is PromptPart.ImagePart -> ImagePartObjc(this.image)
+        is TextPart -> TextPartObjc(this.text)
+        is FileDataPart -> FileDataPartObjc(this.uri, this.mimeType)
+        is InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
+        is ImagePart -> ImagePartObjc(this.image)
         else -> throw error("Unknown prompt part type")
     }
 }

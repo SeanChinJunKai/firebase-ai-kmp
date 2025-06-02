@@ -1,5 +1,7 @@
 package io.github.seanchinjunkai.firebase.ai
 
+import io.github.seanchinjunkai.firebase.ai.type.Content
+
 
 expect object Firebase {
     fun ai(backend: GenerativeBackendEnum): FirebaseAI
@@ -14,5 +16,5 @@ expect class GenerativeModel {
 
     public suspend fun generateContent(prompt: String): String
 
-    public suspend fun generateContent(vararg prompt: PromptPart): String
+    public suspend fun generateContent(vararg prompt: Content): String
 }
