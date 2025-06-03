@@ -42,6 +42,7 @@ kotlin {
             dependencies {
                 implementation(libs.kermit)
                 implementation(libs.kotlinx.coroutines)
+                implementation(libs.kotlinx.datetime)
             }
         }
         val androidMain by getting {

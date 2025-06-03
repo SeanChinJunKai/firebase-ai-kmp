@@ -1,15 +1,18 @@
 package io.github.seanchinjunkai.firebase.ai
 
+import android.graphics.Bitmap
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
-import com.google.firebase.ai.type.FileDataPart
+import com.google.firebase.ai.type.Content as AndroidContent
+import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.GenerativeBackend
-import com.google.firebase.ai.type.ImagePart
-import com.google.firebase.ai.type.InlineDataPart
-import com.google.firebase.ai.type.Part
-import com.google.firebase.ai.type.TextPart
 import com.google.firebase.ai.type.content
+import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
+import com.google.firebase.ai.type.ImagePart as AndroidImagePart
+import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
+import com.google.firebase.ai.type.Part as AndroidPart
+import com.google.firebase.ai.type.TextPart as AndroidTextPart
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 
@@ -39,35 +42,35 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidGenerativeModel.generateContent(prompt).text ?: "No content found"
     }
 
-    public actual suspend fun generateContent(vararg prompt: PromptPart): String {
-        val content = content {
-            prompt.map {
-                part(it.toPart())
-            }
-        }
-        return androidGenerativeModel.generateContent(content).text ?: "No content found"
+    public actual suspend fun generateContent(vararg prompt: Content): String {
+        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+        return androidGenerativeModel.generateContent(*input).text ?: "No content found"
     }
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse {
         return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
     }
 
-    public actual suspend fun countTokens(vararg prompt: PromptPart): CountTokensResponse {
-        val content = content {
-            prompt.map {
-                part(it.toPart())
-            }
-        }
-        return androidGenerativeModel.countTokens(content).toCountTokensResponse()
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
+        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+        return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
     }
+
 }
 
-public fun PromptPart.toPart(): Part {
+public fun Content.toAndroidContent(): AndroidContent {
+    return AndroidContent(
+        this.role,
+        this.parts.map { it.toAndroidPart() }
+    )
+}
+
+public fun Part.toAndroidPart(): AndroidPart {
     return when (this) {
-        is PromptPart.TextPart -> TextPart(this.text)
-        is PromptPart.FileDataPart -> FileDataPart(this.uri, this.mimeType)
-        is PromptPart.InlineDataPart -> InlineDataPart(this.inlineData, this.mimeType)
-        is PromptPart.ImagePart -> ImagePart(this.image)
+        is TextPart -> AndroidTextPart(this.text)
+        is FileDataPart -> AndroidFileDataPart(this.uri, this.mimeType)
+        is InlineDataPart -> AndroidInlineDataPart(this.inlineData, this.mimeType)
+        is ImagePart -> AndroidImagePart(this.image)
         else -> throw error("Unknown prompt part type")
     }
 }

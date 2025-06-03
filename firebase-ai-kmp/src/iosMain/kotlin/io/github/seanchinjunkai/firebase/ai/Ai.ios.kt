@@ -9,6 +9,7 @@ import platform.Foundation.NSNumber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import cocoapods.FirebaseAIBridge.*
+import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 
 
@@ -45,11 +46,11 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
-    public actual suspend fun generateContent(vararg prompt: PromptPart): String =
+    public actual suspend fun generateContent(vararg prompt: Content): String =
         suspendCancellableCoroutine { continuation ->
-            val parts: List<PartObjc> = prompt.map { it.toPart() }
-            iOSGenerativeModel.generateContentWithParts(
-                parts,
+            val contents = prompt.map { it.toiOSContent() }
+            iOSGenerativeModel.generateContentWithContent(
+                contents,
                 completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
                     val string: String = result?.text() ?: "No result"
                     when {
@@ -58,6 +59,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                                 error.localizedDescription
                             )
                         )
+
                         result != null -> continuation.resume(string)
                         else -> continuation.resumeWithException(Exception("No result and no error returned."))
                     }
@@ -82,11 +84,11 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 })
         }
 
-    public actual suspend fun countTokens(vararg prompt: PromptPart): CountTokensResponse =
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
-            val parts: List<PartObjc> = prompt.map { it.toPart() }
-            iOSGenerativeModel.countTokensWithParts(
-                parts,
+            val contents = prompt.map { it.toiOSContent() }
+            iOSGenerativeModel.countTokensWithContent(
+                contents,
                 completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
                     when {
                         error != null -> continuation.resumeWithException(
@@ -100,15 +102,21 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
-
 }
 
+public fun Content.toiOSContent(): ModelContentObjc {
+    return ModelContentObjc(
+        this.role,
+        this.parts.map { it.toiOSPart() }
+    )
+}
 
-public fun PromptPart.toPart(): PartObjc {
+public fun Part.toiOSPart(): PartObjc {
     return when (this) {
-        is PromptPart.TextPart -> TextPartObjc(this.text)
-        is PromptPart.FileDataPart -> FileDataPartObjc(this.uri, this.mimeType)
-        is PromptPart.InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
-        is PromptPart.ImagePart -> ImagePartObjc(this.image)
+        is TextPart -> TextPartObjc(this.text)
+        is FileDataPart -> FileDataPartObjc(this.uri, this.mimeType)
+        is InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
+        is ImagePart -> ImagePartObjc(this.image)
+        else -> throw error("Unknown prompt part type")
     }
 }

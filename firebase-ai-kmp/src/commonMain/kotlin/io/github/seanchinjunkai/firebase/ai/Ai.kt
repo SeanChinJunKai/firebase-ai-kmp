@@ -1,5 +1,6 @@
 package io.github.seanchinjunkai.firebase.ai
 
+import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 
 
@@ -16,9 +17,9 @@ expect class GenerativeModel {
 
     public suspend fun generateContent(prompt: String): String
 
-    public suspend fun generateContent(vararg prompt: PromptPart): String
+    public suspend fun generateContent(vararg prompt: Content): String
 
     public suspend fun countTokens(prompt: String): CountTokensResponse
 
-    public suspend fun countTokens(vararg prompt: PromptPart): CountTokensResponse
+    public suspend fun countTokens(vararg prompt: Content): CountTokensResponse
 }
