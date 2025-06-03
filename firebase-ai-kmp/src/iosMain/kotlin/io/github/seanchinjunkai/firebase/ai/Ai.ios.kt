@@ -11,6 +11,7 @@ import kotlin.coroutines.resumeWithException
 import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 
 
 public actual object Firebase {
@@ -28,12 +29,12 @@ actual class FirebaseAI internal constructor(val iOSFirebaseAI: FirebaseAIObjc) 
 
 
 actual class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc) {
-    public actual suspend fun generateContent(prompt: String): String =
+    public actual suspend fun generateContent(prompt: String): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             iOSGenerativeModel.generateContentWithPrompt(
                 prompt,
                 completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
-                    val string: String = result?.text() ?: "No result"
+                    val result = result?.toGenerateContentResponse()
                     when {
                         error != null -> continuation.resumeWithException(
                             Exception(
@@ -41,18 +42,18 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                             )
                         )
 
-                        result != null -> continuation.resume(string)
+                        result != null -> continuation.resume(result)
                         else -> continuation.resumeWithException(Exception("No result and no error returned."))
                     }
                 })
         }
-    public actual suspend fun generateContent(vararg prompt: Content): String =
+    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.generateContentWithContent(
                 contents,
                 completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
-                    val string: String = result?.text() ?: "No result"
+                    val result = result?.toGenerateContentResponse()
                     when {
                         error != null -> continuation.resumeWithException(
                             Exception(
@@ -60,7 +61,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                             )
                         )
 
-                        result != null -> continuation.resume(string)
+                        result != null -> continuation.resume(result)
                         else -> continuation.resumeWithException(Exception("No result and no error returned."))
                     }
                 })
@@ -102,21 +103,4 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
-}
-
-public fun Content.toiOSContent(): ModelContentObjc {
-    return ModelContentObjc(
-        this.role,
-        this.parts.map { it.toiOSPart() }
-    )
-}
-
-public fun Part.toiOSPart(): PartObjc {
-    return when (this) {
-        is TextPart -> TextPartObjc(this.text)
-        is FileDataPart -> FileDataPartObjc(this.uri, this.mimeType)
-        is InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
-        is ImagePart -> ImagePartObjc(this.image)
-        else -> throw error("Unknown prompt part type")
-    }
 }

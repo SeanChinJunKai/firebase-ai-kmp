@@ -31,7 +31,7 @@ kotlin {
         }
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge") {
-                branch = "main"
+                branch = "sean/enum-refactor"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
