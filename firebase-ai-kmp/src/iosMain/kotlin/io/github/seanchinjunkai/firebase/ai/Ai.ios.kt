@@ -12,6 +12,8 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 
 public actual object Firebase {
@@ -47,6 +49,25 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 })
         }
+
+    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
+        callbackFlow {
+            iOSGenerativeModel.generateContentStreamWithPrompt(
+                prompt,
+                onResponse = {
+                    val response = it?.toGenerateContentResponse()
+                    response?.let { element -> trySend(element) }
+                },
+                onComplete = { error ->
+                    if (error != null) {
+                        close(Throwable(message = error.localizedDescription))
+                    } else {
+                        close()
+                    }
+                }
+            )
+        }
+
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
@@ -65,6 +86,25 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                         else -> continuation.resumeWithException(Exception("No result and no error returned."))
                     }
                 })
+        }
+
+    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
+        callbackFlow {
+            val contents = prompt.map { it.toiOSContent() }
+            iOSGenerativeModel.generateContentStreamWithContent(
+                contents,
+                onResponse = {
+                    val response = it?.toGenerateContentResponse()
+                    response?.let { element -> trySend(element) }
+                },
+                onComplete = { error ->
+                    if (error != null) {
+                        close(Throwable(message = error.localizedDescription))
+                    } else {
+                        close()
+                    }
+                }
+            )
         }
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse =

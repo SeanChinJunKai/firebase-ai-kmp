@@ -6,6 +6,8 @@ import com.google.firebase.ai.type.GenerativeBackend
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 
@@ -36,10 +38,25 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidResponse.toGenerateContentResponse()
     }
 
+    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(prompt)
+        return androidFlowResponse.map {
+            it.toGenerateContentResponse()
+        }
+    }
+
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         val androidResponse = androidGenerativeModel.generateContent(*input)
         return androidResponse.toGenerateContentResponse()
+    }
+
+    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
+        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
+        return androidFlowResponse.map {
+            it.toGenerateContentResponse()
+        }
     }
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse {
