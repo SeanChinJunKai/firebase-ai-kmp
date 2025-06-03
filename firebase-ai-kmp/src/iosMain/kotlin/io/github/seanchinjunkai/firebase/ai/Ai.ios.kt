@@ -10,6 +10,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
+import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 
 
 public actual object Firebase {
@@ -60,6 +61,43 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                         )
 
                         result != null -> continuation.resume(string)
+                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                    }
+                })
+        }
+
+    public actual suspend fun countTokens(prompt: String): CountTokensResponse =
+        suspendCancellableCoroutine { continuation ->
+            iOSGenerativeModel.countTokensWithPrompt(
+                prompt,
+                completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
+                    when {
+                        error != null -> continuation.resumeWithException(
+                            Exception(
+                                error.localizedDescription
+                            )
+                        )
+
+                        result != null -> continuation.resume(result.toCountTokensResponse())
+                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                    }
+                })
+        }
+
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
+        suspendCancellableCoroutine { continuation ->
+            val contents = prompt.map { it.toiOSContent() }
+            iOSGenerativeModel.countTokensWithContent(
+                contents,
+                completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
+                    when {
+                        error != null -> continuation.resumeWithException(
+                            Exception(
+                                error.localizedDescription
+                            )
+                        )
+
+                        result != null -> continuation.resume(result.toCountTokensResponse())
                         else -> continuation.resumeWithException(Exception("No result and no error returned."))
                     }
                 })

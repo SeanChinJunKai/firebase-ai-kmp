@@ -6,7 +6,9 @@ import com.google.firebase.ai.ai
 import com.google.firebase.ai.type.Content as AndroidContent
 import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.GenerativeBackend
+import com.google.firebase.ai.type.content
 import io.github.seanchinjunkai.firebase.ai.type.Content
+import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import com.google.firebase.ai.type.ImagePart as AndroidImagePart
 import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
 import com.google.firebase.ai.type.Part as AndroidPart
@@ -44,6 +46,16 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         return androidGenerativeModel.generateContent(*input).text ?: "No content found"
     }
+
+    public actual suspend fun countTokens(prompt: String): CountTokensResponse {
+        return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
+    }
+
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
+        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+        return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
+    }
+
 }
 
 public fun Content.toAndroidContent(): AndroidContent {
