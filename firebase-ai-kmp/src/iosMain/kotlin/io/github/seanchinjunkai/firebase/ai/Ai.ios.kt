@@ -12,7 +12,9 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 
 
@@ -66,7 +68,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 }
             )
-        }
+        }.buffer(Channel.UNLIMITED)
 
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
@@ -105,7 +107,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 }
             )
-        }
+        }.buffer(Channel.UNLIMITED)
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
