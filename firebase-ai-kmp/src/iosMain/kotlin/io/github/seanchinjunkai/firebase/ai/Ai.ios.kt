@@ -12,10 +12,14 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 
 
 public actual object Firebase {
@@ -53,12 +57,16 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
         }
 
     public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
-        callbackFlow {
+        channelFlow {
             iOSGenerativeModel.generateContentStreamWithPrompt(
                 prompt,
                 onResponse = {
                     val response = it?.toGenerateContentResponse()
-                    response?.let { element -> trySend(element) }
+                    response?.let { element ->
+                        launch {
+                            send(element)
+                        }
+                    }
                 },
                 onComplete = { error ->
                     if (error != null) {
@@ -68,7 +76,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 }
             )
-        }.buffer(Channel.UNLIMITED)
+        }
+
+
 
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
@@ -91,13 +101,17 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
         }
 
     public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
-        callbackFlow {
+        channelFlow {
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.generateContentStreamWithContent(
                 contents,
                 onResponse = {
                     val response = it?.toGenerateContentResponse()
-                    response?.let { element -> trySend(element) }
+                    response?.let { element ->
+                        launch {
+                            send(element)
+                        }
+                    }
                 },
                 onComplete = { error ->
                     if (error != null) {
@@ -107,7 +121,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                     }
                 }
             )
-        }.buffer(Channel.UNLIMITED)
+        }
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
