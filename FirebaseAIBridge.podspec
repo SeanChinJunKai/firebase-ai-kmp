@@ -20,11 +20,11 @@ Pod::Spec.new do |s|
   s.prefix_header_file = false
 
   s.source_files = [
-    'FirebaseAIBridge/Sources/*.{swift,h}',
+    'FirebaseAIBridge/FirebaseAIBridge/Sources/*.{swift,h}',
   ]
   
   s.public_header_files = [
-    'FirebaseAIBridge/Sources/*.h'
+    'FirebaseAIBridge/FirebaseAIBridge/Sources/*.h'
   ]
 
   s.swift_version = '5.9'
