@@ -5,7 +5,6 @@ package io.github.seanchinjunkai.firebase.ai
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import platform.Foundation.NSError
-import platform.Foundation.NSNumber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import cocoapods.FirebaseAIBridge.*
@@ -20,7 +19,10 @@ import kotlinx.coroutines.flow.callbackFlow
 
 public actual object Firebase {
     public actual fun ai(backend: GenerativeBackendEnum): FirebaseAI {
-        return FirebaseAI(FirebaseObjc.aiWithBackend(NSNumber(backend.ordinal)))
+        return when (backend) {
+            GenerativeBackendEnum.GOOGLE_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcGoogleAI))
+            GenerativeBackendEnum.VERTEX_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcVertexAI))
+        }
     }
 }
 
