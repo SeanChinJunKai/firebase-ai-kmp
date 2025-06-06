@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
     spec.vendored_frameworks      = 'build/cocoapods/framework/FirebaseAI.framework'
     spec.libraries                = 'c++'
     spec.ios.deployment_target    = '15.0'
-    spec.dependency 'FirebaseAIBridge'
+                
                 
     if !Dir.exist?('build/cocoapods/framework/FirebaseAI.framework') || Dir.empty?('build/cocoapods/framework/FirebaseAI.framework')
         raise "
