@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.authors          = 'Sean Chin Jun Kai'
 
   s.source           = {
-    :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git',
+    :git => 'https://github.com/SeanChinJunKai/firebase-ai-kmp.git',
     :tag => 'CocoaPods-' + s.version.to_s
   }
 
@@ -20,11 +20,11 @@ Pod::Spec.new do |s|
   s.prefix_header_file = false
 
   s.source_files = [
-    'FirebaseAIBridge/Sources/*.{swift,h}',
+    'FirebaseAIBridge/FirebaseAIBridge/Sources/*.{swift,h}',
   ]
   
   s.public_header_files = [
-    'FirebaseAIBridge/Sources/*.h'
+    'FirebaseAIBridge/FirebaseAIBridge/Sources/*.h'
   ]
 
   s.swift_version = '5.9'
