@@ -118,6 +118,8 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 ```
 // GenerativeBackendEnum.GOOGLE_AI will utilise the Gemini Developer API
 // GenerativeBackendEnum.VERTEX_AI will utilise the Vertex AI Gemini API
+
+let prompt = "Write a story about a magic backpack."
 val model = Firebase.ai(GenerativeBackendEnum.GOOGLE_AI).generativeModel("gemini-2.0-flash")
 val response = model.generateContent(prompt)
 return response.text ?: "No text generated"
