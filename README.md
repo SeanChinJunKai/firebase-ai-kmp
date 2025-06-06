@@ -7,6 +7,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 ### Requirements
 - A Kotlin Multiplatform project with both Android and iOS targets
 
+### Project Setup
 1. Add the dependency
     - Add the following to your `libs.versions.toml`:
     ```
@@ -26,21 +27,22 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 2. Firebase Console Setup
     - Go to the [Firebase Console](https://console.firebase.google.com/).
     - Create a new project if you haven't already.
-    - In your project, click on AI -> AI Logic on the left sidebar, then open Settings.
+    - In your project, navigate to the left sidebar and click on `AI` -> `AI Logic` then open `Settings`.
     - Enable either the Gemini Developer API, the VertexAI Gemini API, or both.
 
 3. Link the native [iOS Bridge](https://github.com/SeanChinJunKai/FirebaseAIBridge)
+
    Since the SDK depends on a native Firebase iOS framework, FirebaseAIBridge, this will need to be linked to your existing iOS project.
 
 4. Using CocoaPods
-    - Directly as a local iOS framework
-    - Follow these instructions if your Kotlin Multiplatform module is integrated directly with your iOS project as a local iOS framework. That is, Xcode is calling the embedAndSignAppleFrameworkForXcode Gradle task as part of the build. At the time of writing, if you generated your Kotlin Multiplatform project using the [online wizard](https://kmp.jetbrains.com/), this is how it's set up.
-    - In this scenario, you need to specify the transitive dependency on FirebaseAIBridge in your Podfile. Add the following:
-    ```
-    pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :branch => 'main'
-    ```
+    1. Directly as a local iOS framework
+        - Follow these instructions if your Kotlin Multiplatform module is integrated directly with your iOS project as a local iOS framework. That is, Xcode is calling the embedAndSignAppleFrameworkForXcode Gradle task as part of the build. At the time of writing, if you generated your Kotlin Multiplatform project using the [online wizard](https://kmp.jetbrains.com/), this is how it's set up.
+        - In this scenario, you need to specify the transitive dependency on FirebaseAIBridge in your Podfile. Add the following:
+          ```
+          pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :branch => 'main'
+          ```
 
-5. iOS Setup
+6. iOS Setup
     - Create an iOS app in your Firebase project.
     - Download `GoogleService-Info.plist` and place it under `iosApp/iosApp/` directory.
     - Add the FirebaseCore depedency to your `Podfile`:
@@ -79,7 +81,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     ```
     - Run pod install in the `iosApp` directory
 
-6. Android Setup
+7. Android Setup
     - Create an Android app in the Firebase Console.
     - Download google-services.json and place it in `composeApp` directory.
     - Add the following to your `libs.versions.toml`:
@@ -103,7 +105,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     }
     ```
 
-7. Import FirebaseAI
+8. Import FirebaseAI
 
    You should now be able to import `FirebaseAI` in `commonMain`
     ```
@@ -112,7 +114,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     ```
 
 
-8. Quick start
+9. Quick start
 ```
 // GenerativeBackendEnum.GOOGLE_AI will utilise the Gemini Developer API
 // GenerativeBackendEnum.VERTEX_AI will utilise the Vertex AI Gemini API
