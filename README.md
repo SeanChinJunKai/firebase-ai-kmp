@@ -44,7 +44,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 
 6. iOS Setup
     - Create an iOS app in your Firebase project.
-    - Download `GoogleService-Info.plist` and place it under `iosApp/iosApp/` directory.
+    - Download `GoogleService-Info.plist` and place it under `iosApp/iosApp` directory.
     - Add the FirebaseCore depedency to your `Podfile`:
     ```
     pod 'FirebaseCore', :git => 'https://github.com/firebase/firebase-ios-sdk.git', :tag => '11.14.0'
@@ -83,7 +83,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 
 7. Android Setup
     - Create an Android app in the Firebase Console.
-    - Download google-services.json and place it in `composeApp` directory.
+    - Download `google-services.json` and place it in `composeApp` directory.
     - Add the following to your `libs.versions.toml`:
     ```
     [versions]
