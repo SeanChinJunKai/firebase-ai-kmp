@@ -1,20 +1,15 @@
 package io.github.seanchinjunkai.firebase.ai
 
-import android.graphics.Bitmap
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
-import com.google.firebase.ai.type.Content as AndroidContent
-import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.GenerativeBackend
-import com.google.firebase.ai.type.content
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
-import com.google.firebase.ai.type.ImagePart as AndroidImagePart
-import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
-import com.google.firebase.ai.type.Part as AndroidPart
-import com.google.firebase.ai.type.TextPart as AndroidTextPart
-import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
+import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
+import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 
 
 public actual object Firebase {
@@ -38,13 +33,30 @@ actual class FirebaseAI internal constructor(internal val androidFirebaseAI: And
 
 
 actual class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel) {
-    public actual suspend fun generateContent(prompt: String): String {
-        return androidGenerativeModel.generateContent(prompt).text ?: "No content found"
+    public actual suspend fun generateContent(prompt: String): GenerateContentResponse {
+        val androidResponse = androidGenerativeModel.generateContent(prompt)
+        return androidResponse.toGenerateContentResponse()
     }
 
-    public actual suspend fun generateContent(vararg prompt: Content): String {
+    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(prompt)
+        return androidFlowResponse.map {
+            it.toGenerateContentResponse()
+        }
+    }
+
+    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-        return androidGenerativeModel.generateContent(*input).text ?: "No content found"
+        val androidResponse = androidGenerativeModel.generateContent(*input)
+        return androidResponse.toGenerateContentResponse()
+    }
+
+    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
+        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
+        return androidFlowResponse.map {
+            it.toGenerateContentResponse()
+        }
     }
 
     public actual suspend fun countTokens(prompt: String): CountTokensResponse {
@@ -56,21 +68,4 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
     }
 
-}
-
-public fun Content.toAndroidContent(): AndroidContent {
-    return AndroidContent(
-        this.role,
-        this.parts.map { it.toAndroidPart() }
-    )
-}
-
-public fun Part.toAndroidPart(): AndroidPart {
-    return when (this) {
-        is TextPart -> AndroidTextPart(this.text)
-        is FileDataPart -> AndroidFileDataPart(this.uri, this.mimeType)
-        is InlineDataPart -> AndroidInlineDataPart(this.inlineData, this.mimeType)
-        is ImagePart -> AndroidImagePart(this.image)
-        else -> throw error("Unknown prompt part type")
-    }
 }
