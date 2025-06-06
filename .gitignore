@@ -9,5 +9,8 @@ captures
 local.properties
 xcuserdata
 .kotlin
+Pods/
+Podfile.lock
+*.xcworkspace
 #So we don't accidentally commit our private keys
 *.gpg
