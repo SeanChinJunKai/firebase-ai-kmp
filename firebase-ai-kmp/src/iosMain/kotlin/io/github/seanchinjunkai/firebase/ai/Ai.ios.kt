@@ -18,10 +18,10 @@ import kotlinx.coroutines.flow.callbackFlow
 
 
 public actual object Firebase {
-    public actual fun ai(backend: GenerativeBackendEnum): FirebaseAI {
+    public actual fun ai(backend: GenerativeBackend): FirebaseAI {
         return when (backend) {
-            GenerativeBackendEnum.GOOGLE_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcGoogleAI))
-            GenerativeBackendEnum.VERTEX_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcVertexAI))
+            GenerativeBackend.GOOGLE_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcGoogleAI))
+            GenerativeBackend.VERTEX_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcVertexAI))
         }
     }
 }

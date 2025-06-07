@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 expect object Firebase {
-    fun ai(backend: GenerativeBackendEnum): FirebaseAI
+    fun ai(backend: GenerativeBackend): FirebaseAI
 }
 
 

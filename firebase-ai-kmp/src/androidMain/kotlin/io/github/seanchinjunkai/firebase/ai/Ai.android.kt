@@ -2,7 +2,6 @@ package io.github.seanchinjunkai.firebase.ai
 
 import com.google.firebase.Firebase
 import com.google.firebase.ai.ai
-import com.google.firebase.ai.type.GenerativeBackend
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
@@ -14,10 +13,10 @@ import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 
 public actual object Firebase {
     // TODO: App parameter currently missing
-    public actual fun ai(backend: GenerativeBackendEnum): FirebaseAI {
+    public actual fun ai(backend: GenerativeBackend): FirebaseAI {
         return when (backend)  {
-            GenerativeBackendEnum.GOOGLE_AI -> FirebaseAI(Firebase.ai(backend = GenerativeBackend.googleAI()))
-            GenerativeBackendEnum.VERTEX_AI -> FirebaseAI(Firebase.ai(backend = GenerativeBackend.vertexAI()))
+            GenerativeBackend.GOOGLE_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.googleAI()))
+            GenerativeBackend.VERTEX_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.vertexAI()))
         }
     }
 }
