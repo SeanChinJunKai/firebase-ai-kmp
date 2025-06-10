@@ -14,6 +14,7 @@ expect object Firebase {
 expect class FirebaseAI {
     fun generativeModel(modelName: String): IGenerativeModel
 }
+
 interface IGenerativeModel {
 
     public suspend fun generateContent(prompt: String): GenerateContentResponse
