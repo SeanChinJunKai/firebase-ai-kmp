@@ -25,32 +25,32 @@ public actual object Firebase {
 
 actual class FirebaseAI internal constructor(internal val androidFirebaseAI: AndroidFirebaseAI) {
     // TODO: Add missing parameters
-    public actual fun generativeModel(modelName: String): GenerativeModel {
+    public actual fun generativeModel(modelName: String): IGenerativeModel {
         return GenerativeModel(androidFirebaseAI.generativeModel(modelName))
     }
 }
 
 
-actual class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel) {
-    public actual suspend fun generateContent(prompt: String): GenerateContentResponse {
+class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel): IGenerativeModel {
+    public override suspend fun generateContent(prompt: String): GenerateContentResponse {
         val androidResponse = androidGenerativeModel.generateContent(prompt)
         return androidResponse.toGenerateContentResponse()
     }
 
-    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
+    public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
         val androidFlowResponse = androidGenerativeModel.generateContentStream(prompt)
         return androidFlowResponse.map {
             it.toGenerateContentResponse()
         }
     }
 
-    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
+    public override suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         val androidResponse = androidGenerativeModel.generateContent(*input)
         return androidResponse.toGenerateContentResponse()
     }
 
-    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
+    public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
         return androidFlowResponse.map {
@@ -58,11 +58,11 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         }
     }
 
-    public actual suspend fun countTokens(prompt: String): CountTokensResponse {
+    public override suspend fun countTokens(prompt: String): CountTokensResponse {
         return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
     }
 
-    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
+    public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
     }
