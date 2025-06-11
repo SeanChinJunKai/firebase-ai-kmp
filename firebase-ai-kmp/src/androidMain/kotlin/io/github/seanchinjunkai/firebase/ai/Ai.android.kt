@@ -5,10 +5,13 @@ import com.google.firebase.ai.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
+import com.google.firebase.ai.type.FirebaseAIException as AndroidFirebaseAIException
 
 
 public actual object Firebase {
@@ -33,38 +36,64 @@ actual class FirebaseAI internal constructor(internal val androidFirebaseAI: And
 
 class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel): IGenerativeModel {
     public override suspend fun generateContent(prompt: String): GenerateContentResponse {
-        val androidResponse = androidGenerativeModel.generateContent(prompt)
-        return androidResponse.toGenerateContentResponse()
+        try {
+            val androidResponse = androidGenerativeModel.generateContent(prompt)
+            return androidResponse.toGenerateContentResponse()
+        } catch(e: AndroidFirebaseAIException) {
+            throw e.toFirebaseAIException()
+        }
     }
 
     public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
         val androidFlowResponse = androidGenerativeModel.generateContentStream(prompt)
-        return androidFlowResponse.map {
-            it.toGenerateContentResponse()
-        }
+        return androidFlowResponse
+            .catch { throwable ->
+                val firebaseException = throwable as? AndroidFirebaseAIException
+                throw firebaseException?.toFirebaseAIException() ?: UnknownException(throwable.message ?: "", throwable.cause)
+            }
+            .map {
+                it.toGenerateContentResponse()
+            }
     }
 
     public override suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
-        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-        val androidResponse = androidGenerativeModel.generateContent(*input)
-        return androidResponse.toGenerateContentResponse()
+        try {
+            val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+            val androidResponse = androidGenerativeModel.generateContent(*input)
+            return androidResponse.toGenerateContentResponse()
+        } catch (e: AndroidFirebaseAIException) {
+            throw e.toFirebaseAIException()
+        }
     }
 
     public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
-        return androidFlowResponse.map {
-            it.toGenerateContentResponse()
-        }
+        return androidFlowResponse
+            .catch { throwable ->
+                val firebaseException = throwable as? AndroidFirebaseAIException
+                throw firebaseException?.toFirebaseAIException() ?: UnknownException(throwable.message ?: "", throwable.cause)
+            }
+            .map {
+                it.toGenerateContentResponse()
+            }
+
     }
 
     public override suspend fun countTokens(prompt: String): CountTokensResponse {
-        return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
+        try {
+            return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
+        } catch (e: AndroidFirebaseAIException) {
+            throw e.toFirebaseAIException()
+        }
     }
 
     public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
-        val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-        return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
+        try {
+            val input = prompt.map { it.toAndroidContent() }.toTypedArray()
+            return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
+        } catch (e: AndroidFirebaseAIException) {
+            throw e.toFirebaseAIException()
+        }
     }
-
 }
