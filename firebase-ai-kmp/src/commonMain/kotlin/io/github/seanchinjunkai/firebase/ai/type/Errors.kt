@@ -14,7 +14,7 @@ public class UnsupportedUserLocationException(message: String, cause: Throwable?
 
 public class InvalidStateException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 
-public class ResponseStoppedException(public val response: GenerateContentResponse, message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
+public class ResponseStoppedException(public val response: GenerateContentResponse?, message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 
 public class RequestTimeoutException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 

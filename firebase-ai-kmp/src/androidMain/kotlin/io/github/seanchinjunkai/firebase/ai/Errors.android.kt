@@ -31,7 +31,7 @@ import io.github.seanchinjunkai.firebase.ai.type.UnsupportedUserLocationExceptio
 
 public fun AndroidFirebaseAIException.toFirebaseAIException(): FirebaseAIException {
     return when (this) {
-        is AndroidSerializationException -> SerializationException(this.message ?: "", cause)
+        is AndroidSerializationException -> SerializationException(message ?: "", cause)
         is AndroidServerException -> ServerException(message ?: "", cause)
         is AndroidInvalidAPIKeyException -> InvalidAPIKeyException(message ?: "", cause)
         is AndroidPromptBlockedException -> PromptBlockedException(response?.toGenerateContentResponse(), message ?: "", cause)

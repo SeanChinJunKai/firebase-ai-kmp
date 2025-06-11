@@ -11,6 +11,7 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -42,14 +43,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
                     val result = result?.toGenerateContentResponse()
                     when {
-                        error != null -> continuation.resumeWithException(
-                            Exception(
-                                error.localizedDescription
-                            )
-                        )
-
+                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
                         result != null -> continuation.resume(result)
-                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                        else -> continuation.resumeWithException(UnknownException("No generateContent result and no error returned."))
                     }
                 })
         }
@@ -66,7 +62,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 },
                 onComplete = { error ->
                     if (error != null) {
-                        close(Throwable(message = error.localizedDescription))
+                        close(error.toFirebaseAIException())
                     } else {
                         close()
                     }
@@ -87,14 +83,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
                     val result = result?.toGenerateContentResponse()
                     when {
-                        error != null -> continuation.resumeWithException(
-                            Exception(
-                                error.localizedDescription
-                            )
-                        )
-
+                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
                         result != null -> continuation.resume(result)
-                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                        else -> continuation.resumeWithException(UnknownException("No generateContent result and no error returned."))
                     }
                 })
         }
@@ -112,7 +103,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 },
                 onComplete = { error ->
                     if (error != null) {
-                        close(Throwable(message = error.localizedDescription))
+                        close(error.toFirebaseAIException())
                     } else {
                         close()
                     }
@@ -129,14 +120,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 prompt,
                 completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
                     when {
-                        error != null -> continuation.resumeWithException(
-                            Exception(
-                                error.localizedDescription
-                            )
-                        )
-
+                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
                         result != null -> continuation.resume(result.toCountTokensResponse())
-                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                        else -> continuation.resumeWithException(UnknownException("No countTokens result and no error returned."))
                     }
                 })
         }
@@ -148,14 +134,9 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 contents,
                 completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
                     when {
-                        error != null -> continuation.resumeWithException(
-                            Exception(
-                                error.localizedDescription
-                            )
-                        )
-
+                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
                         result != null -> continuation.resume(result.toCountTokensResponse())
-                        else -> continuation.resumeWithException(Exception("No result and no error returned."))
+                        else -> continuation.resumeWithException(UnknownException("No countTokens result and no error returned."))
                     }
                 })
         }
