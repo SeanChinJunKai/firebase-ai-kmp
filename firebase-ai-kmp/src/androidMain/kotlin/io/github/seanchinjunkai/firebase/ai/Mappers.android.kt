@@ -1,5 +1,6 @@
 package io.github.seanchinjunkai.firebase.ai
 
+import com.google.firebase.ai.type.generationConfig
 import io.github.seanchinjunkai.firebase.ai.type.BlockReason
 import io.github.seanchinjunkai.firebase.ai.type.Candidate
 import io.github.seanchinjunkai.firebase.ai.type.Citation
@@ -8,14 +9,20 @@ import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.ContentModality
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.Date
+import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
 import io.github.seanchinjunkai.firebase.ai.type.HarmProbability
 import io.github.seanchinjunkai.firebase.ai.type.HarmSeverity
+import io.github.seanchinjunkai.firebase.ai.type.ImagePart
+import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.ModalityTokenCount
+import io.github.seanchinjunkai.firebase.ai.type.Part
 import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
+import io.github.seanchinjunkai.firebase.ai.type.TextPart
 import io.github.seanchinjunkai.firebase.ai.type.UsageMetadata
 import java.util.Calendar
 import com.google.firebase.ai.type.CountTokensResponse as AndroidCountTokensResponse
@@ -39,7 +46,7 @@ import com.google.firebase.ai.type.TextPart as AndroidTextPart
 import com.google.firebase.ai.type.ImagePart as AndroidImagePart
 import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
-
+import com.google.firebase.ai.type.GenerationConfig as AndroidGenerationConfig
 
 /* Mapping from firebase-android-sdk types to commonMain types */
 public fun AndroidGenerateContentResponse.toGenerateContentResponse(): GenerateContentResponse {
@@ -240,5 +247,21 @@ public fun Part.toAndroidPart(): AndroidPart {
         is InlineDataPart -> AndroidInlineDataPart(this.inlineData, this.mimeType)
         is ImagePart -> AndroidImagePart(this.image)
         else -> throw error("Unknown prompt part type")
+    }
+}
+
+public fun GenerationConfig.toAndroidGenerationConfig(): AndroidGenerationConfig {
+    return generationConfig {
+        setTemperature(this.temperature)
+        setTopK(this.topK)
+        setTopP(this.topP)
+        setCandidateCount(this.candidateCount)
+        setMaxOutputTokens(this.maxOutputTokens)
+        setPresencePenalty(this.presencePenalty)
+        setFrequencyPenalty(this.frequencyPenalty)
+        setStopSequences(this.stopSequences)
+        setResponseMimeType(this.responseMimeType)
+        setResponseSchema(this.responseSchema)
+        setResponseModalities(this.responseModalities)
     }
 }

@@ -1,11 +1,6 @@
 package io.github.seanchinjunkai.firebase.ai.type
 
-import io.github.seanchinjunkai.firebase.ai.FileDataPart
-import io.github.seanchinjunkai.firebase.ai.ImagePart
-import io.github.seanchinjunkai.firebase.ai.InlineDataPart
-import io.github.seanchinjunkai.firebase.ai.Part
-import io.github.seanchinjunkai.firebase.ai.PlatformImage
-import io.github.seanchinjunkai.firebase.ai.TextPart
+import io.github.seanchinjunkai.firebase.ai.type.PlatformImage
 
 public class Content(
     public val role: String? = "user",

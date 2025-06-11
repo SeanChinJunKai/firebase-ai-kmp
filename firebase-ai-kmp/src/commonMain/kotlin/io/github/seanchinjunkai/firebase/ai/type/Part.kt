@@ -1,4 +1,6 @@
-package io.github.seanchinjunkai.firebase.ai
+package io.github.seanchinjunkai.firebase.ai.type
+
+import io.github.seanchinjunkai.firebase.ai.type.PlatformImage
 
 public interface Part {}
 
