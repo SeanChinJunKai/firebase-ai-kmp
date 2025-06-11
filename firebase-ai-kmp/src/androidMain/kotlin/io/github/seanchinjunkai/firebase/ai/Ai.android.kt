@@ -5,6 +5,7 @@ import com.google.firebase.ai.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -48,7 +49,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidFlowResponse
             .catch { throwable ->
                 val firebaseException = throwable as? AndroidFirebaseAIException
-                throw firebaseException?.toFirebaseAIException() ?: throwable
+                throw firebaseException?.toFirebaseAIException() ?: UnknownException(throwable.message ?: "", throwable.cause)
             }
             .map {
             it.toGenerateContentResponse()
@@ -71,7 +72,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
         return androidFlowResponse
             .catch { throwable ->
                 val firebaseException = throwable as? AndroidFirebaseAIException
-                throw firebaseException?.toFirebaseAIException() ?: throwable
+                throw firebaseException?.toFirebaseAIException() ?: UnknownException(throwable.message ?: "", throwable.cause)
             }
             .map {
             it.toGenerateContentResponse()
