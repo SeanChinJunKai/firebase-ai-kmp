@@ -8,7 +8,6 @@ import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
