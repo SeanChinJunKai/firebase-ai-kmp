@@ -11,6 +11,7 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerativeBackend
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
