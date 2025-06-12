@@ -29,14 +29,14 @@ public actual object Firebase {
 
 
 actual class FirebaseAI internal constructor(val iOSFirebaseAI: FirebaseAIObjc) {
-    public actual fun generativeModel(modelName: String): GenerativeModel {
+    public actual fun generativeModel(modelName: String): IGenerativeModel {
         return GenerativeModel(iOSFirebaseAI.generativeModelWithModelName(modelName))
     }
 }
 
 
-actual class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc) {
-    public actual suspend fun generateContent(prompt: String): GenerateContentResponse =
+class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc): IGenerativeModel {
+    public override suspend fun generateContent(prompt: String): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             iOSGenerativeModel.generateContentWithPrompt(
                 prompt,
@@ -50,7 +50,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 })
         }
 
-    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
+    public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
         callbackFlow {
             iOSGenerativeModel.generateContentStreamWithPrompt(
                 prompt,
@@ -75,7 +75,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
 
 
 
-    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
+    public override suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.generateContentWithContent(
@@ -90,7 +90,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 })
         }
 
-    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
+    public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
         callbackFlow {
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.generateContentStreamWithContent(
@@ -114,7 +114,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
             }
         }
 
-    public actual suspend fun countTokens(prompt: String): CountTokensResponse =
+    public override suspend fun countTokens(prompt: String): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
             iOSGenerativeModel.countTokensWithPrompt(
                 prompt,
@@ -127,7 +127,7 @@ actual class GenerativeModel internal constructor(val iOSGenerativeModel: Genera
                 })
         }
 
-    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
+    public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.countTokensWithContent(

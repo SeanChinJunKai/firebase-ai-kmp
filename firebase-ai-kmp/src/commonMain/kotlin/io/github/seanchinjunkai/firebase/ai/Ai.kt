@@ -12,10 +12,10 @@ expect object Firebase {
 
 
 expect class FirebaseAI {
-    fun generativeModel(modelName: String): GenerativeModel
+    fun generativeModel(modelName: String): IGenerativeModel
 }
 
-expect class GenerativeModel {
+interface IGenerativeModel {
 
     public suspend fun generateContent(prompt: String): GenerateContentResponse
 
