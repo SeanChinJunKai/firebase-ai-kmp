@@ -2,8 +2,8 @@ package io.github.seanchinjunkai.firebase.ai.type
 
 public class CountTokensResponse(
     public val totalTokens: Int,
-    public val totalBillableCharacters: Int?,
-    public val promptTokensDetails: List<ModalityTokenCount>
+    public val totalBillableCharacters: Int? = null,
+    public val promptTokensDetails: List<ModalityTokenCount> = emptyList()
 ) {
     public operator fun component1(): Int = totalTokens
 
