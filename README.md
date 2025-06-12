@@ -39,7 +39,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
         - Follow these instructions if your Kotlin Multiplatform module is integrated directly with your iOS project as a local iOS framework. That is, Xcode is calling the embedAndSignAppleFrameworkForXcode Gradle task as part of the build. At the time of writing, if you generated your Kotlin Multiplatform project using the [online wizard](https://kmp.jetbrains.com/), this is how it's set up.
         - In this scenario, you need to specify the transitive dependency on FirebaseAIBridge in your Podfile. Add the following:
           ```
-          pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :branch => 'main'
+          pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :tag => '0.1.0'
           ```
 
 6. iOS Setup
