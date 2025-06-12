@@ -124,3 +124,6 @@ val prompt = "Write a story about a magic backpack."
 val response = model.generateContent(prompt)
 print(response.text)
 ```
+
+## Try out the sample app powered by this SDK
+[firebase-ai-sample](https://github.com/SeanChinJunKai/firebase-ai-sample) - Kotlin Multiplatform sample application that showcases Firebase AI integration. Runs on both Android and iOS
