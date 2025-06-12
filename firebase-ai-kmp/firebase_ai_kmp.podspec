@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'firebase_ai_kmp'
-    spec.version                  = '1.0.0'
+    spec.version                  = '0.1.0'
     spec.homepage                 = ''
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
