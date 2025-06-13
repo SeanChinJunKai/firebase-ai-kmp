@@ -1,5 +1,7 @@
 # Firebase AI Logic Kotlin Multiplatform (KMP) SDK
 
+> ⚠️ : This is an experimental library and may be subject to breaking changes.
+
 Build AI-powered mobile and web apps and features with the Gemini and Imagen models using Firebase AI Logic
 
 
@@ -29,6 +31,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     - Create a new project if you haven't already.
     - In your project, navigate to the left sidebar and click on `AI` -> `AI Logic` then open `Settings`.
     - Enable either the Gemini Developer API, the VertexAI Gemini API, or both.
+> **_NOTE:_** Using the Vertex AI Gemini API requires that your project is linked to a Cloud Billing account. This means that your Firebase project is on the pay-as-you-go Blaze pricing plan.
 
 3. Link the native [iOS Bridge](https://github.com/SeanChinJunKai/FirebaseAIBridge)
 
