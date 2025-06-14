@@ -4,6 +4,16 @@
 
 Build AI-powered mobile and web apps and features with the Gemini and Imagen models using Firebase AI Logic
 
+## Table of Contents
+- [Supported Platforms](#supported-platforms)
+- [Getting Started](#getting-started)
+- [Samples](#try-out-the-sample-app-powered-by-this-sdk)
+
+## Supported Platforms
+| Platform | Targets Supported                     |
+|----------|----------------------------------------|
+| Android  | `androidTarget`                        |
+| iOS      | `iosArm64`, `iosX64`, `iosSimulatorArm64` |
 
 ## Getting Started
 ### Requirements
