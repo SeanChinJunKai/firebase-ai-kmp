@@ -22,6 +22,7 @@ kotlin {
     }
     iosArm64()
     iosSimulatorArm64()
+    iosX64()
 
     cocoapods {
         ios.deploymentTarget = libs.versions.ios.deploymentTarget.get()
