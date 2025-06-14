@@ -3,37 +3,38 @@ package io.github.seanchinjunkai.firebase.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import com.google.firebase.ai.type.CountTokensResponse as AndroidCountTokensResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
-class GenerativeModelTest {
+class AndroidGenerativeModelTest {
     @Test
     fun `countTokens success and returns both totalTokens and totalBillableCharacters`() = runTest {
-        val model = FakeGenerativeModel()
+        val model = FakeAndroidGenerativeModel(FakeFirebaseAndroidGenerativeModel())
         val response = model.countTokens("test prompt")
-        assertTrue(response.totalTokens == 6)
-        assertTrue(response.totalBillableCharacters == 16)
+        assert(response.totalTokens == 6)
+        assert(response.totalBillableCharacters == 16)
     }
 
     @Test
     fun `countTokens success and returns only totalTokens`() = runTest {
-        val model = object : FakeGenerativeModel() {
-            override suspend fun countTokens(prompt: String): CountTokensResponse {
-                return CountTokensResponse(
-                    totalTokens = 258
+        val fakeFirebaseAndroidModel = object : FakeFirebaseAndroidGenerativeModel() {
+            override suspend fun countTokens(prompt: String): AndroidCountTokensResponse {
+                return AndroidCountTokensResponse(
+                    totalTokens = 258,
                 )
             }
         }
+        val model = FakeAndroidGenerativeModel(fakeFirebaseAndroidModel)
         val response = model.countTokens("test prompt")
-        assertTrue(response.totalTokens == 258)
-        assertTrue(response.totalBillableCharacters == null)
+        assert(response.totalTokens == 258)
+        assert(response.totalBillableCharacters == null)
     }
 }
 
 
-open class FakeGenerativeModel: IGenerativeModel {
+class FakeAndroidGenerativeModel(val androidGenerativeModel: FakeFirebaseAndroidGenerativeModel): IGenerativeModel {
     override suspend fun generateContent(prompt: String): GenerateContentResponse {
         TODO("Not yet implemented")
     }
@@ -51,13 +52,19 @@ open class FakeGenerativeModel: IGenerativeModel {
     }
 
     override suspend fun countTokens(prompt: String): CountTokensResponse {
-        return CountTokensResponse(
-            totalTokens = 6,
-            totalBillableCharacters = 16
-        )
+        return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
     }
 
     override suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
         TODO("Not yet implemented")
+    }
+}
+
+open class FakeFirebaseAndroidGenerativeModel() {
+    open suspend fun countTokens(prompt: String): AndroidCountTokensResponse {
+        return AndroidCountTokensResponse(
+            totalTokens = 6,
+            totalBillableCharacters = 16
+        )
     }
 }
