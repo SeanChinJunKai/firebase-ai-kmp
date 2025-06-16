@@ -2,16 +2,13 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
-import io.github.seanchinjunkai.firebase.ai.type.ContentModality
 import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc as iOSCountTokensResponse
 import cocoapods.FirebaseAIBridge.GenerativeModelObjc as iOSGenerativeModel
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withTimeout
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.test.Test
 import platform.Foundation.NSError
-import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
