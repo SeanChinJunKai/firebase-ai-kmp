@@ -41,7 +41,7 @@ kotlin {
          */
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                branch = "sean/test-util"
+                branch = "sean/refactor-count-tokens"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
