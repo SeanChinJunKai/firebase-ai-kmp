@@ -21,7 +21,7 @@ import platform.Foundation.NSNumber
 
 
 fun readJsonFile(filePath: String): String {
-    val file = SystemFileSystem.source(Path("/Users/seanchin/firebase-ai-kmp/firebase-ai-kmp/src/iosTest/resources/$filePath"))
+    val file = SystemFileSystem.source(SystemFileSystem.resolve(Path("src/iosTest/resources/$filePath")))
     val jsonString = file.buffered().use{ it.readString() }
     return jsonString
 }
