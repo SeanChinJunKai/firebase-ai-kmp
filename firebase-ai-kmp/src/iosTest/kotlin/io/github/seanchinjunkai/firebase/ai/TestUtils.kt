@@ -9,20 +9,20 @@ import kotlinx.serialization.encoding.*
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc
 import cocoapods.FirebaseAIBridge.ModalityTokenCountObjc
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.io.buffered
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
-import kotlinx.io.readString
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlin.experimental.ExperimentalNativeApi
 import platform.Foundation.NSNumber
+import platform.Foundation.NSBundle
+import platform.Foundation.NSData
+import platform.Foundation.dataWithContentsOfFile
 
-fun readJsonFile(filePath: String): String {
-    println(SystemFileSystem.resolve(Path(".")))
-    val file =  SystemFileSystem.source(Path("/Users/seanchin/firebase-ai-kmp/firebase-ai-kmp/src/iosTest/resources/$filePath"))
-    val jsonString = file.buffered().use{ it.readString() }
-    return jsonString
+
+fun readJsonFile(resourceName: String): String {
+    val path = NSBundle.mainBundle.pathForResource("resources/$resourceName", "json") ?: ""
+    val data = NSData.dataWithContentsOfFile(path)
+    val byteArray = data?.toByteArray()!!
+    return byteArray.decodeToString()
 }
 
 fun readCountTokensResponse(filePath: String): CountTokensResponseObjc {

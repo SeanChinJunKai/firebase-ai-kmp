@@ -66,7 +66,6 @@ kotlin {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.kotlinx.serialization)
-                implementation(libs.kotlinx.io)
             }
         }
     }
@@ -118,4 +117,16 @@ mavenPublishing {
             developerConnection = "scm:git:ssh://git@github.com/SeanChinJunKai/firebase-ai-kmp.git"
         }
     }
+}
+
+listOf(
+    "iosSimulatorArm64",
+    "iosX64"
+).forEach { platform ->
+    val copyIosTestResources = tasks.register<Copy>("copyIos${platform}TestResources") {
+        from("src/iosTest/resources")
+        into("build/bin/$platform/debugTest/resources")
+    }
+
+    tasks.findByName("${platform}Test")!!.dependsOn(copyIosTestResources)
 }

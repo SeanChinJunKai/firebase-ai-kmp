@@ -2,18 +2,15 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
-import co.touchlab.kermit.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc as iOSCountTokensResponse
 import cocoapods.FirebaseAIBridge.GenerativeModelObjc as iOSGenerativeModel
 import kotlinx.coroutines.test.runTest
-import kotlinx.io.files.SystemFileSystem
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.test.Test
 import platform.Foundation.NSError
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlinx.io.files.Path
 
 class iOSGenerativeModelTest {
     @Test
@@ -23,7 +20,7 @@ class iOSGenerativeModelTest {
                 prompt: String,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
-                val response = readCountTokensResponse("unary-success-total-tokens.json")
+                val response = readCountTokensResponse("unary-success-total-tokens")
                 completionHandler(response, null)
             }
         }
@@ -40,7 +37,7 @@ class iOSGenerativeModelTest {
                 prompt: String,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
-                val response = readCountTokensResponse("unary-success-no-billable-characters.json")
+                val response = readCountTokensResponse("unary-success-no-billable-characters")
                 completionHandler(response, null)
             }
         }
@@ -57,7 +54,7 @@ class iOSGenerativeModelTest {
                 prompt: String,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
-                val response = readCountTokensResponse("unary-success-detailed-token-response.json")
+                val response = readCountTokensResponse("unary-success-detailed-token-response")
                 completionHandler(response, null)
             }
         }
