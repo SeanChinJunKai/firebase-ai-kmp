@@ -2,6 +2,7 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
+import co.touchlab.kermit.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc as iOSCountTokensResponse
 import cocoapods.FirebaseAIBridge.GenerativeModelObjc as iOSGenerativeModel
@@ -15,7 +16,6 @@ import kotlin.test.assertTrue
 import kotlinx.io.files.Path
 
 class iOSGenerativeModelTest {
-    /*
     @Test
     fun `countTokens succeeds`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
@@ -69,11 +69,5 @@ class iOSGenerativeModelTest {
         assertTrue {
             response.promptTokensDetails.any { it.modality.name == "IMAGE" && it.tokenCount == 1806 }
         }
-    }
-     */
-    @Test
-    fun `directory find`() = runTest {
-        println(SystemFileSystem.resolve(Path(".")))
-        assert(true)
     }
 }
