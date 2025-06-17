@@ -2,7 +2,12 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
+import cocoapods.FirebaseAIBridge.FirebaseAIErrorObjcPromptBlocked
+import cocoapods.FirebaseAIBridge.FirebaseAIErrorObjcResponseStopped
 import cocoapods.FirebaseAIBridge.FirebaseAIErrorObjcServer
+import cocoapods.FirebaseAIBridge.GenerateContentResponseObjc
+import io.github.seanchinjunkai.firebase.ai.type.PromptBlockedException
+import io.github.seanchinjunkai.firebase.ai.type.ResponseStoppedException
 import io.github.seanchinjunkai.firebase.ai.type.ServerException
 import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc as iOSCountTokensResponse
@@ -15,26 +20,10 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
+// Tests are based on vertexAI backend
 class iOSGenerativeModelTest {
     @Test
     fun `countTokens succeeds`() = runTest {
-        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun countTokensWithPrompt(
-                prompt: String,
-                completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
-            ) {
-                val response = readCountTokensResponse("unary-success-total-tokens")
-                completionHandler(response, null)
-            }
-        }
-        val model = GenerativeModel(fakeFirebaseiOSModel)
-        val response = model.countTokens("prompt")
-        assert(response.totalTokens == 6)
-        assert(response.totalBillableCharacters == 16)
-    }
-
-    @Test
-    fun `countTokens succeeds with no billable characters`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
             override fun countTokensWithPrompt(
                 prompt: String,
@@ -64,13 +53,14 @@ class iOSGenerativeModelTest {
         val model = GenerativeModel(fakeFirebaseiOSModel)
         val response = model.countTokens("prompt")
         assert(response.totalTokens == 1837)
-        assert(response.totalBillableCharacters == 117)
+        assert(response.totalBillableCharacters == null)
         assertNotNull(response.promptTokensDetails)
         assertTrue {
             response.promptTokensDetails.any { it.modality.name == "IMAGE" && it.tokenCount == 1806 }
         }
     }
 
+    // TODO: Refactor to have custom serializer for error
     @Test
     fun `countTokens fails with model not found`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
@@ -94,4 +84,113 @@ class iOSGenerativeModelTest {
         }
     }
 
+    @Test
+    fun `generateContent gives short reply`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithPrompt(
+                prompt: String,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val response = readGenerateContentResponse("unary-success-basic-reply-short")
+                completionHandler(response, null)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        val response = model.generateContent("prompt")
+        assert(response.candidates.isNotEmpty())
+        assert(response.candidates.first().finishReason?.name == "STOP")
+        assert(response.candidates.first().content.parts.isNotEmpty())
+    }
+
+    @Test
+    fun `generateContent gives long reply`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithPrompt(
+                prompt: String,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val response = readGenerateContentResponse("unary-success-basic-reply-long")
+                completionHandler(response, null)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        val response = model.generateContent("prompt")
+        assert(response.candidates.isNotEmpty())
+        assert(response.candidates.first().finishReason?.name == "STOP")
+        assert(response.candidates.first().content.parts.isNotEmpty())
+    }
+
+    @Test
+    fun `generateContent fails with unknown model`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithPrompt(
+                prompt: String,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val error = NSError(
+                    domain = "FirebaseAIBridge",
+                    code = FirebaseAIErrorObjcServer,
+                    userInfo = mapOf(
+                        "localizedDescription" to "models/unknown is not found for API version v1, or is not supported for GenerateContent. Call ListModels to see the list of available models and their supported methods."
+                    )
+                )
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        assertFailsWith<ServerException> {
+            model.generateContent("prompt")
+        }
+    }
+
+    @Test
+    fun `generateContent fails with blocked prompt for safety with message`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithPrompt(
+                prompt: String,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val response = readGenerateContentResponse("unary-failure-prompt-blocked-safety-with-message")
+                val error = NSError(
+                    domain = "FirebaseAIBridge",
+                    code = FirebaseAIErrorObjcPromptBlocked,
+                    userInfo = mapOf(
+                        "response" to response
+                    )
+                )
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        val exception = assertFailsWith<PromptBlockedException> {
+            model.generateContent("prompt")
+        }
+        assert(exception.response?.promptFeedback?.blockReason?.name == "SAFETY")
+        assert(exception.response?.promptFeedback?.blockReasonMessage == "Reasons")
+    }
+
+    @Test
+    fun `generateContent fails with response stopped for safety`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithPrompt(
+                prompt: String,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val response = readGenerateContentResponse("unary-failure-finish-reason-safety")
+                val error = NSError(
+                    domain = "FirebaseAIBridge",
+                    code = FirebaseAIErrorObjcResponseStopped,
+                    userInfo = mapOf(
+                        "response" to response
+                    )
+                )
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        val exception = assertFailsWith<ResponseStoppedException> {
+            model.generateContent("prompt")
+        }
+        assert(exception.response?.candidates?.first()?.finishReason?.name == "SAFETY")
+    }
 }
