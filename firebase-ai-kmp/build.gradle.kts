@@ -31,7 +31,7 @@ kotlin {
         }
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                tag = "0.1.0"
+                tag = "0.2.0"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }

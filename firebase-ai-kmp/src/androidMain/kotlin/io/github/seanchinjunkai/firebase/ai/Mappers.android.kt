@@ -220,9 +220,27 @@ public fun AndroidModalityTokenCount.toModalityTokenCount(): ModalityTokenCount 
 }
 
 public fun AndroidContentModality.toContentModality(): ContentModality {
-    return ContentModality(
-        ordinal = this.ordinal
-    )
+    return when (this) {
+        AndroidContentModality.TEXT -> ContentModality(
+            name = "TEXT"
+        )
+        AndroidContentModality.VIDEO -> ContentModality(
+            name = "VIDEO"
+        )
+        AndroidContentModality.AUDIO -> ContentModality(
+            name = "AUDIO"
+        )
+        AndroidContentModality.IMAGE -> ContentModality(
+            name = "IMAGE"
+        )
+        AndroidContentModality.DOCUMENT -> ContentModality(
+            name = "DOCUMENT"
+        )
+        AndroidContentModality.UNSPECIFIED -> ContentModality(
+            name = "UNSPECIFIED"
+        )
+        else -> throw error("Unknown ContentModality")
+    }
 }
 
 /* Mapping from commonMain types to firebase-android-sdk types */

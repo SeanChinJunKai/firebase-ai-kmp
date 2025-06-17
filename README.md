@@ -25,7 +25,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     - Add the following to your `libs.versions.toml`:
     ```
     [versions]
-    firebase-ai-kmp = "0.1.0"
+    firebase-ai-kmp = "0.2.0"
     
     [libraries]
     firebase-ai-kmp = { module = "io.github.seanchinjunkai:firebase-ai-kmp", version.ref = "firebase-ai-kmp" }
