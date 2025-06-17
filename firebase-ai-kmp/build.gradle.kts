@@ -1,7 +1,6 @@
 import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -31,17 +30,9 @@ kotlin {
         framework {
             baseName = "FirebaseAI" // Not FirebaseAIBridge due to ld: can't link a dylib with itself. same install_name as dylib being built
         }
-        /*
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                tag = "0.1.0"
-            }
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-         */
-        pod("FirebaseAIBridge") {
-            source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                branch = "sean/refactor-count-tokens"
+                tag = "0.2.0"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
