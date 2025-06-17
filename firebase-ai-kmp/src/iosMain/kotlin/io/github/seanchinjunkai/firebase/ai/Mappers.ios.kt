@@ -206,7 +206,7 @@ public fun iOSModalityTokenCount.toModalityTokenCount(): ModalityTokenCount {
 
 public fun iOSContentModality.toContentModality(): ContentModality {
     return ContentModality(
-        ordinal = this.toInt()
+        name = this.rawValue()
     )
 }
 
