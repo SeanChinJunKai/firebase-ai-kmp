@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.kotlinCocoapods)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.seanchinjunkai"
@@ -38,7 +39,6 @@ kotlin {
     }
 
     sourceSets {
-
         val commonMain by getting {
             dependencies {
                 implementation(libs.kermit)
@@ -56,6 +56,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)
+                implementation(libs.kotlinx.serialization)
             }
         }
     }
@@ -107,4 +108,16 @@ mavenPublishing {
             developerConnection = "scm:git:ssh://git@github.com/SeanChinJunKai/firebase-ai-kmp.git"
         }
     }
+}
+
+listOf(
+    "iosSimulatorArm64",
+    "iosX64"
+).forEach { platform ->
+    val copyIosTestResources = tasks.register<Copy>("copyIos${platform}TestResources") {
+        from("src/iosTest/resources")
+        into("build/bin/$platform/debugTest/resources")
+    }
+
+    tasks.findByName("${platform}Test")!!.dependsOn(copyIosTestResources)
 }
