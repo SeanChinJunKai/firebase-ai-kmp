@@ -25,8 +25,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `countTokens succeeds`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun countTokensWithPrompt(
-                prompt: String,
+            override fun countTokensWithContent(
+                content: List<*>,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
                 val response = readCountTokensResponse("unary-success-no-billable-characters")
@@ -42,8 +42,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `countTokens with modality fields returned`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun countTokensWithPrompt(
-                prompt: String,
+            override fun countTokensWithContent(
+                content: List<*>,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
                 val response = readCountTokensResponse("unary-success-detailed-token-response")
@@ -64,8 +64,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `countTokens fails with model not found`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun countTokensWithPrompt(
-                prompt: String,
+            override fun countTokensWithContent(
+                content: List<*>,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
                 val error = NSError(
@@ -87,8 +87,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `generateContent gives short reply`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse("unary-success-basic-reply-short")
@@ -105,8 +105,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `generateContent gives long reply`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse("unary-success-basic-reply-long")
@@ -123,8 +123,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `generateContent fails with unknown model`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val error = NSError(
@@ -146,8 +146,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `generateContent fails with blocked prompt for safety with message`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse("unary-failure-prompt-blocked-safety-with-message")
@@ -172,8 +172,8 @@ class iOSGenerativeModelTest {
     @Test
     fun `generateContent fails with response stopped for safety`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse("unary-failure-finish-reason-safety")
