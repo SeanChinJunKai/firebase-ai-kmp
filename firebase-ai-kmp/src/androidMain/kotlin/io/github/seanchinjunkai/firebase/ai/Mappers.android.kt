@@ -13,6 +13,8 @@ import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
+import io.github.seanchinjunkai.firebase.ai.type.HarmBlockMethod
+import io.github.seanchinjunkai.firebase.ai.type.HarmBlockThreshold
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
 import io.github.seanchinjunkai.firebase.ai.type.HarmProbability
 import io.github.seanchinjunkai.firebase.ai.type.HarmSeverity
@@ -21,8 +23,12 @@ import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.ModalityTokenCount
 import io.github.seanchinjunkai.firebase.ai.type.Part
 import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
+import io.github.seanchinjunkai.firebase.ai.type.RequestOptions
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
+import io.github.seanchinjunkai.firebase.ai.type.SafetySetting
 import io.github.seanchinjunkai.firebase.ai.type.TextPart
+import io.github.seanchinjunkai.firebase.ai.type.Tool
+import io.github.seanchinjunkai.firebase.ai.type.ToolConfig
 import io.github.seanchinjunkai.firebase.ai.type.UsageMetadata
 import java.util.Calendar
 import com.google.firebase.ai.type.CountTokensResponse as AndroidCountTokensResponse
@@ -47,6 +53,12 @@ import com.google.firebase.ai.type.ImagePart as AndroidImagePart
 import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
 import com.google.firebase.ai.type.GenerationConfig as AndroidGenerationConfig
+import com.google.firebase.ai.type.SafetySetting as AndroidSafetySetting
+import com.google.firebase.ai.type.HarmBlockThreshold as AndroidHarmBlockThreshold
+import com.google.firebase.ai.type.HarmBlockMethod as AndroidHarmBlockMethod
+import com.google.firebase.ai.type.Tool as AndroidTool
+import com.google.firebase.ai.type.ToolConfig as AndroidToolConfig
+import com.google.firebase.ai.type.RequestOptions as AndroidRequestOptions
 
 /* Mapping from firebase-android-sdk types to commonMain types */
 public fun AndroidGenerateContentResponse.toGenerateContentResponse(): GenerateContentResponse {
@@ -141,24 +153,12 @@ public fun AndroidSafetyRating.toSafetyRating(): SafetyRating {
 
 public fun AndroidHarmCategory.toHarmCategory(): HarmCategory {
     return when (this) {
-        AndroidHarmCategory.UNKNOWN -> HarmCategory(
-            name = "UNKNOWN"
-        )
-        AndroidHarmCategory.HARASSMENT -> HarmCategory(
-            name = "HARASSMENT"
-        )
-        AndroidHarmCategory.HATE_SPEECH -> HarmCategory(
-            name = "HATE_SPEECH"
-        )
-        AndroidHarmCategory.SEXUALLY_EXPLICIT -> HarmCategory(
-            name = "SEXUALLY_EXPLICIT"
-        )
-        AndroidHarmCategory.DANGEROUS_CONTENT -> HarmCategory(
-            name = "DANGEROUS_CONTENT"
-        )
-        AndroidHarmCategory.CIVIC_INTEGRITY -> HarmCategory(
-            name = "CIVIC_INTEGRITY"
-        )
+        AndroidHarmCategory.UNKNOWN -> HarmCategory.UNKNOWN
+        AndroidHarmCategory.HARASSMENT -> HarmCategory.HARASSMENT
+        AndroidHarmCategory.HATE_SPEECH -> HarmCategory.HATE_SPEECH
+        AndroidHarmCategory.SEXUALLY_EXPLICIT -> HarmCategory.SEXUALLY_EXPLICIT
+        AndroidHarmCategory.DANGEROUS_CONTENT -> HarmCategory.DANGEROUS_CONTENT
+        AndroidHarmCategory.CIVIC_INTEGRITY -> HarmCategory.CIVIC_INTEGRITY
         else -> throw error("Unknown HarmCategory")
     }
 }
@@ -264,4 +264,55 @@ public fun GenerationConfig.toAndroidGenerationConfig(): AndroidGenerationConfig
         setResponseSchema(this.responseSchema)
         setResponseModalities(this.responseModalities)
     }
+}
+
+public fun SafetySetting.toAndroidSafetySetting(): AndroidSafetySetting {
+    return AndroidSafetySetting(
+        this.harmCategory.toAndroidHarmCategory(),
+        this.threshold.toAndroidHarmBlockThreshold(),
+        this.method?.toAndroidHarmBlockMethod()
+    )
+}
+
+public fun HarmCategory.toAndroidHarmCategory(): AndroidHarmCategory {
+    return when (this) {
+        HarmCategory.UNKNOWN -> AndroidHarmCategory.UNKNOWN
+        HarmCategory.HARASSMENT -> AndroidHarmCategory.HARASSMENT
+        HarmCategory.HATE_SPEECH -> AndroidHarmCategory.HATE_SPEECH
+        HarmCategory.SEXUALLY_EXPLICIT -> AndroidHarmCategory.SEXUALLY_EXPLICIT
+        HarmCategory.DANGEROUS_CONTENT -> AndroidHarmCategory.DANGEROUS_CONTENT
+        HarmCategory.CIVIC_INTEGRITY -> AndroidHarmCategory.CIVIC_INTEGRITY
+        else -> throw error("Unknown HarmCategory")
+    }
+}
+
+public fun HarmBlockThreshold.toAndroidHarmBlockThreshold(): AndroidHarmBlockThreshold {
+    return when (this) {
+        HarmBlockThreshold.LOW_AND_ABOVE -> AndroidHarmBlockThreshold.LOW_AND_ABOVE
+        HarmBlockThreshold.MEDIUM_AND_ABOVE -> AndroidHarmBlockThreshold.MEDIUM_AND_ABOVE
+        HarmBlockThreshold.ONLY_HIGH -> AndroidHarmBlockThreshold.ONLY_HIGH
+        HarmBlockThreshold.NONE -> AndroidHarmBlockThreshold.NONE
+        HarmBlockThreshold.OFF -> AndroidHarmBlockThreshold.OFF
+        else -> throw error("Unknown HarmBlockThreshold")
+    }
+}
+
+public fun HarmBlockMethod.toAndroidHarmBlockMethod(): AndroidHarmBlockMethod {
+    return when (this) {
+        HarmBlockMethod.SEVERITY -> AndroidHarmBlockMethod.SEVERITY
+        HarmBlockMethod.PROBABILITY -> AndroidHarmBlockMethod.PROBABILITY
+        else -> throw IllegalArgumentException("Unknown HarmBlockMethod")
+    }
+}
+
+public fun Tool.toAndroidTool(): AndroidTool {
+    TODO("Not yet implemented")
+}
+
+public fun ToolConfig.toAndroidToolConfig(): AndroidToolConfig {
+    TODO("Not yet implemented")
+}
+
+public fun RequestOptions.toAndroidRequestOptions(): AndroidRequestOptions {
+    TODO("Not yet implemented")
 }

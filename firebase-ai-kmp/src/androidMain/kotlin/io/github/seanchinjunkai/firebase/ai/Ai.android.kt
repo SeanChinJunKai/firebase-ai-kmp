@@ -7,6 +7,10 @@ import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.GenerativeBackend
+import io.github.seanchinjunkai.firebase.ai.type.RequestOptions
+import io.github.seanchinjunkai.firebase.ai.type.SafetySetting
+import io.github.seanchinjunkai.firebase.ai.type.Tool
+import io.github.seanchinjunkai.firebase.ai.type.ToolConfig
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -28,9 +32,26 @@ public actual object Firebase {
 
 
 actual class FirebaseAI internal constructor(internal val androidFirebaseAI: AndroidFirebaseAI) {
-    // TODO: Add missing parameters
-    public actual fun generativeModel(modelName: String, generationConfig: GenerationConfig?): GenerativeModel {
-        return GenerativeModel(androidFirebaseAI.generativeModel(modelName, generationConfig?.toAndroidGenerationConfig()))
+    public actual fun generativeModel(
+        modelName: String,
+        generationConfig: GenerationConfig?,
+        safetySettings: List<SafetySetting>?,
+        tools: List<Tool>?,
+        toolConfig: ToolConfig?,
+        systemInstruction: Content?,
+        requestOptions: RequestOptions
+    ): GenerativeModel {
+        return GenerativeModel(
+            androidFirebaseAI.generativeModel(
+                modelName,
+                generationConfig?.toAndroidGenerationConfig(),
+                safetySettings?.map { it.toAndroidSafetySetting() },
+                tools?.map { it.toAndroidTool() },
+                toolConfig?.toAndroidToolConfig(),
+                systemInstruction?.toAndroidContent(),
+                requestOptions.toAndroidRequestOptions()
+            )
+        )
     }
 }
 
