@@ -314,5 +314,7 @@ public fun ToolConfig.toAndroidToolConfig(): AndroidToolConfig {
 }
 
 public fun RequestOptions.toAndroidRequestOptions(): AndroidRequestOptions {
-    TODO("Not yet implemented")
+    return AndroidRequestOptions(
+        this.timeout
+    )
 }

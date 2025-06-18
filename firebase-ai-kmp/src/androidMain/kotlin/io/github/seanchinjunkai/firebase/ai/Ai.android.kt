@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.map
 import com.google.firebase.ai.FirebaseAI as AndroidFirebaseAI
 import com.google.firebase.ai.GenerativeModel as AndroidGenerativeModel
 import com.google.firebase.ai.type.FirebaseAIException as AndroidFirebaseAIException
+import com.google.firebase.ai.type.RequestOptions as AndroidRequestOptions
+
 
 public actual object Firebase {
     // TODO: App parameter currently missing
