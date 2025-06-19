@@ -5,8 +5,6 @@ internal constructor(
     internal val mode: Mode,
     internal val allowedFunctionNames: List<String>? = null
 ) {
-
-    /** Configuration for dictating when the model should call the attached function. */
     internal enum class Mode {
         AUTO,
         ANY,
