@@ -11,6 +11,8 @@ import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.Date
 import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
+import io.github.seanchinjunkai.firebase.ai.type.FunctionCallingConfig
+import io.github.seanchinjunkai.firebase.ai.type.FunctionDeclaration
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.HarmBlockMethod
@@ -26,6 +28,8 @@ import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
 import io.github.seanchinjunkai.firebase.ai.type.RequestOptions
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
 import io.github.seanchinjunkai.firebase.ai.type.SafetySetting
+import io.github.seanchinjunkai.firebase.ai.type.Schema
+import io.github.seanchinjunkai.firebase.ai.type.StringFormat
 import io.github.seanchinjunkai.firebase.ai.type.TextPart
 import io.github.seanchinjunkai.firebase.ai.type.Tool
 import io.github.seanchinjunkai.firebase.ai.type.ToolConfig
@@ -59,6 +63,10 @@ import com.google.firebase.ai.type.HarmBlockMethod as AndroidHarmBlockMethod
 import com.google.firebase.ai.type.Tool as AndroidTool
 import com.google.firebase.ai.type.ToolConfig as AndroidToolConfig
 import com.google.firebase.ai.type.RequestOptions as AndroidRequestOptions
+import com.google.firebase.ai.type.FunctionDeclaration as AndroidFunctionDeclaration
+import com.google.firebase.ai.type.FunctionCallingConfig as AndroidFunctionCallingConfig
+import com.google.firebase.ai.type.Schema as AndroidSchema
+import com.google.firebase.ai.type.StringFormat as AndroidStringFormat
 
 /* Mapping from firebase-android-sdk types to commonMain types */
 public fun AndroidGenerateContentResponse.toGenerateContentResponse(): GenerateContentResponse {
@@ -232,6 +240,10 @@ public fun AndroidContentModality.toContentModality(): ContentModality {
     )
 }
 
+public fun AndroidSchema.toSchema(): Schema {
+    TODO("Not yet implemented")
+}
+
 /* Mapping from commonMain types to firebase-android-sdk types */
 public fun Content.toAndroidContent(): AndroidContent {
     return AndroidContent(
@@ -306,11 +318,34 @@ public fun HarmBlockMethod.toAndroidHarmBlockMethod(): AndroidHarmBlockMethod {
 }
 
 public fun Tool.toAndroidTool(): AndroidTool {
-    TODO("Not yet implemented")
+    return AndroidTool.functionDeclarations(
+        this.functionDeclarations?.map { it.toAndroidFunctionDeclaration() } ?: emptyList()
+    )
+}
+
+public fun FunctionDeclaration.toAndroidFunctionDeclaration(): AndroidFunctionDeclaration {
+    return AndroidFunctionDeclaration(
+        this.name,
+        this.description,
+        this.parameters.mapValues { (_, value) ->
+            value.toAndroidSchema()
+        },
+        this.optionalParameters
+    )
 }
 
 public fun ToolConfig.toAndroidToolConfig(): AndroidToolConfig {
-    TODO("Not yet implemented")
+    return AndroidToolConfig(
+        this.functionCallingConfig?.toAndroidFunctionCallingConfig()
+    )
+}
+
+public fun FunctionCallingConfig.toAndroidFunctionCallingConfig(): AndroidFunctionCallingConfig {
+    return when (this.mode) {
+        FunctionCallingConfig.Mode.AUTO -> AndroidFunctionCallingConfig.auto()
+        FunctionCallingConfig.Mode.ANY -> AndroidFunctionCallingConfig.any(this.allowedFunctionNames)
+        FunctionCallingConfig.Mode.NONE -> AndroidFunctionCallingConfig.none()
+    }
 }
 
 public fun RequestOptions.toAndroidRequestOptions(): AndroidRequestOptions {
@@ -318,3 +353,8 @@ public fun RequestOptions.toAndroidRequestOptions(): AndroidRequestOptions {
         this.timeout
     )
 }
+
+public fun Schema.toAndroidSchema(): AndroidSchema {
+    TODO("Not yet implemented")
+}
+
