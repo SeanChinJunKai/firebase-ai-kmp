@@ -116,9 +116,14 @@ public fun AndroidUsageMetadata.toUsageMetadata(): UsageMetadata {
 }
 
 public fun AndroidBlockReason.toBlockReason(): BlockReason {
-    return BlockReason(
-        name = this.name,
-    )
+    return when (this) {
+        AndroidBlockReason.UNKNOWN -> BlockReason.UNKNOWN
+        AndroidBlockReason.SAFETY -> BlockReason.SAFETY
+        AndroidBlockReason.OTHER -> BlockReason.OTHER
+        AndroidBlockReason.BLOCKLIST -> BlockReason.BLOCKLIST
+        AndroidBlockReason.PROHIBITED_CONTENT -> BlockReason.PROHIBITED_CONTENT
+        else -> error("Unknown BlockReason")
+    }
 }
 
 public fun AndroidSafetyRating.toSafetyRating(): SafetyRating {
@@ -134,73 +139,51 @@ public fun AndroidSafetyRating.toSafetyRating(): SafetyRating {
 
 public fun AndroidHarmCategory.toHarmCategory(): HarmCategory {
     return when (this) {
-        AndroidHarmCategory.UNKNOWN -> HarmCategory(
-            name = "UNKNOWN"
-        )
-        AndroidHarmCategory.HARASSMENT -> HarmCategory(
-            name = "HARASSMENT"
-        )
-        AndroidHarmCategory.HATE_SPEECH -> HarmCategory(
-            name = "HATE_SPEECH"
-        )
-        AndroidHarmCategory.SEXUALLY_EXPLICIT -> HarmCategory(
-            name = "SEXUALLY_EXPLICIT"
-        )
-        AndroidHarmCategory.DANGEROUS_CONTENT -> HarmCategory(
-            name = "DANGEROUS_CONTENT"
-        )
-        AndroidHarmCategory.CIVIC_INTEGRITY -> HarmCategory(
-            name = "CIVIC_INTEGRITY"
-        )
-        else -> throw error("Unknown HarmCategory")
+        AndroidHarmCategory.UNKNOWN -> HarmCategory.UNKNOWN
+        AndroidHarmCategory.HARASSMENT -> HarmCategory.HARASSMENT
+        AndroidHarmCategory.HATE_SPEECH -> HarmCategory.HATE_SPEECH
+        AndroidHarmCategory.SEXUALLY_EXPLICIT -> HarmCategory.SEXUALLY_EXPLICIT
+        AndroidHarmCategory.DANGEROUS_CONTENT -> HarmCategory.DANGEROUS_CONTENT
+        AndroidHarmCategory.CIVIC_INTEGRITY -> HarmCategory.CIVIC_INTEGRITY
+        else -> error("Unknown HarmCategory")
     }
 }
 
 public fun AndroidHarmProbability.toHarmProbability(): HarmProbability {
     return when (this) {
-        AndroidHarmProbability.UNKNOWN -> HarmProbability(
-            name = "UNKNOWN"
-        )
-        AndroidHarmProbability.NEGLIGIBLE -> HarmProbability(
-            name = "NEGLIGIBLE"
-        )
-        AndroidHarmProbability.LOW -> HarmProbability(
-            name = "LOW"
-        )
-        AndroidHarmProbability.MEDIUM -> HarmProbability(
-            name = "MEDIUM"
-        )
-        AndroidHarmProbability.HIGH -> HarmProbability(
-            name = "HIGH"
-        )
-        else -> throw error("Unknown HarmProbability")
+        AndroidHarmProbability.UNKNOWN -> HarmProbability.UNKNOWN
+        AndroidHarmProbability.NEGLIGIBLE -> HarmProbability.NEGLIGIBLE
+        AndroidHarmProbability.LOW -> HarmProbability.LOW
+        AndroidHarmProbability.MEDIUM -> HarmProbability.MEDIUM
+        AndroidHarmProbability.HIGH -> HarmProbability.HIGH
+        else -> error("Unknown HarmProbability")
     }
 }
 public fun AndroidHarmSeverity.toHarmSeverity(): HarmSeverity {
     return when (this) {
-        AndroidHarmSeverity.UNKNOWN -> HarmSeverity(
-            name = "UNKNOWN"
-        )
-        AndroidHarmSeverity.NEGLIGIBLE -> HarmSeverity(
-            name = "NEGLIGIBLE"
-        )
-        AndroidHarmSeverity.LOW -> HarmSeverity(
-            name = "LOW"
-        )
-        AndroidHarmSeverity.MEDIUM -> HarmSeverity(
-            name = "MEDIUM"
-        )
-        AndroidHarmSeverity.HIGH -> HarmSeverity(
-            name = "HIGH"
-        )
-        else -> throw error("Unknown HarmProbability")
+        AndroidHarmSeverity.UNKNOWN -> HarmSeverity.UNKNOWN
+        AndroidHarmSeverity.NEGLIGIBLE -> HarmSeverity.NEGLIGIBLE
+        AndroidHarmSeverity.LOW -> HarmSeverity.LOW
+        AndroidHarmSeverity.MEDIUM -> HarmSeverity.MEDIUM
+        AndroidHarmSeverity.HIGH -> HarmSeverity.HIGH
+        else -> error("Unknown HarmSeverity")
     }
 }
 
 public fun AndroidFinishReason.toFinishReason(): FinishReason {
-    return FinishReason(
-        name = this.name,
-    )
+    return when (this) {
+        AndroidFinishReason.UNKNOWN -> FinishReason.UNKNOWN
+        AndroidFinishReason.STOP -> FinishReason.STOP
+        AndroidFinishReason.MAX_TOKENS -> FinishReason.MAX_TOKENS
+        AndroidFinishReason.SAFETY -> FinishReason.SAFETY
+        AndroidFinishReason.RECITATION -> FinishReason.RECITATION
+        AndroidFinishReason.OTHER -> FinishReason.OTHER
+        AndroidFinishReason.BLOCKLIST -> FinishReason.BLOCKLIST
+        AndroidFinishReason.PROHIBITED_CONTENT -> FinishReason.PROHIBITED_CONTENT
+        AndroidFinishReason.SPII -> FinishReason.SPII
+        AndroidFinishReason.MALFORMED_FUNCTION_CALL -> FinishReason.MALFORMED_FUNCTION_CALL
+        else -> error("Unknown FinishReason")
+    }
 }
 
 
@@ -221,25 +204,13 @@ public fun AndroidModalityTokenCount.toModalityTokenCount(): ModalityTokenCount 
 
 public fun AndroidContentModality.toContentModality(): ContentModality {
     return when (this) {
-        AndroidContentModality.TEXT -> ContentModality(
-            name = "TEXT"
-        )
-        AndroidContentModality.VIDEO -> ContentModality(
-            name = "VIDEO"
-        )
-        AndroidContentModality.AUDIO -> ContentModality(
-            name = "AUDIO"
-        )
-        AndroidContentModality.IMAGE -> ContentModality(
-            name = "IMAGE"
-        )
-        AndroidContentModality.DOCUMENT -> ContentModality(
-            name = "DOCUMENT"
-        )
-        AndroidContentModality.UNSPECIFIED -> ContentModality(
-            name = "UNSPECIFIED"
-        )
-        else -> throw error("Unknown ContentModality")
+        AndroidContentModality.UNSPECIFIED -> ContentModality.UNSPECIFIED
+        AndroidContentModality.TEXT -> ContentModality.TEXT
+        AndroidContentModality.IMAGE -> ContentModality.IMAGE
+        AndroidContentModality.VIDEO -> ContentModality.VIDEO
+        AndroidContentModality.AUDIO -> ContentModality.AUDIO
+        AndroidContentModality.DOCUMENT -> ContentModality.DOCUMENT
+        else -> error("Unknown ContentModality")
     }
 }
 

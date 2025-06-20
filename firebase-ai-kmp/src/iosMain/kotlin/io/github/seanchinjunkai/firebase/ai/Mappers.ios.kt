@@ -155,33 +155,59 @@ public fun iOSSafetyRating.toSafetyRating(): SafetyRating {
 }
 
 public fun iOSFinishReason.toFinishReason(): FinishReason {
-    return FinishReason(
-        name = this.rawValue()
-    )
+    return when (this.rawValue()) {
+        "STOP" -> FinishReason.STOP
+        "MAX_TOKENS" -> FinishReason.MAX_TOKENS
+        "SAFETY" -> FinishReason.SAFETY
+        "RECITATION" -> FinishReason.RECITATION
+        "OTHER" -> FinishReason.OTHER
+        "BLOCKLIST" -> FinishReason.BLOCKLIST
+        "PROHIBITED_CONTENT" -> FinishReason.PROHIBITED_CONTENT
+        "SPII" -> FinishReason.SPII
+        "MALFORMED_FUNCTION_CALL" -> FinishReason.MALFORMED_FUNCTION_CALL
+        else -> FinishReason.UNKNOWN
+    }
 }
 
 public fun iOSBlockReason.toBlockReason(): BlockReason {
-    return BlockReason(
-        name = this.rawValue(),
-    )
+    return when (this.rawValue()) {
+        "SAFETY" -> BlockReason.SAFETY
+        "OTHER" -> BlockReason.OTHER
+        "BLOCKLIST" -> BlockReason.BLOCKLIST
+        "PROHIBITED_CONTENT" -> BlockReason.PROHIBITED_CONTENT
+        else -> BlockReason.UNKNOWN
+    }
 }
 
 public fun iOSHarmCategory.toHarmCategory(): HarmCategory {
-    return HarmCategory(
-        name = this.rawValue()
-    )
+    return when (this.rawValue()) {
+        "HARM_CATEGORY_HARASSMENT" -> HarmCategory.HARASSMENT
+        "HARM_CATEGORY_HATE_SPEECH" -> HarmCategory.HATE_SPEECH
+        "HARM_CATEGORY_SEXUALLY_EXPLICIT" -> HarmCategory.SEXUALLY_EXPLICIT
+        "HARM_CATEGORY_DANGEROUS_CONTENT" -> HarmCategory.DANGEROUS_CONTENT
+        "HARM_CATEGORY_CIVIC_INTEGRITY" -> HarmCategory.CIVIC_INTEGRITY
+        else -> HarmCategory.UNKNOWN
+    }
 }
 
 public fun iOSHarmProbability.toHarmProbability(): HarmProbability {
-    return HarmProbability(
-        name = this.rawValue()
-    )
+    return when (this.rawValue()) {
+        "NEGLIGIBLE" -> HarmProbability.NEGLIGIBLE
+        "LOW" -> HarmProbability.LOW
+        "MEDIUM" -> HarmProbability.MEDIUM
+        "HIGH" -> HarmProbability.HIGH
+        else -> HarmProbability.UNKNOWN
+    }
 }
 
 public fun iOSHarmSeverity.toHarmSeverity(): HarmSeverity {
-    return HarmSeverity(
-        name = this.rawValue()
-    )
+    return when (this.rawValue()) {
+        "HARM_SEVERITY_NEGLIGIBLE" -> HarmSeverity.NEGLIGIBLE
+        "HARM_SEVERITY_LOW" -> HarmSeverity.LOW
+        "HARM_SEVERITY_MEDIUM" -> HarmSeverity.MEDIUM
+        "HARM_SEVERITY_HIGH" -> HarmSeverity.HIGH
+        else -> HarmSeverity.UNKNOWN
+    }
 }
 
 
@@ -205,9 +231,14 @@ public fun iOSModalityTokenCount.toModalityTokenCount(): ModalityTokenCount {
 }
 
 public fun iOSContentModality.toContentModality(): ContentModality {
-    return ContentModality(
-        name = this.rawValue()
-    )
+    return when (this.rawValue()) {
+        "TEXT" -> ContentModality.TEXT
+        "IMAGE" -> ContentModality.IMAGE
+        "VIDEO" -> ContentModality.VIDEO
+        "AUDIO" -> ContentModality.AUDIO
+        "DOCUMENT" -> ContentModality.DOCUMENT
+        else -> ContentModality.UNSPECIFIED
+    }
 }
 
 
