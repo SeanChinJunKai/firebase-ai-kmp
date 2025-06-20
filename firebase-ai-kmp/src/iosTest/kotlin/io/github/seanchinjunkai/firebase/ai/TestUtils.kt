@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 import kotlin.experimental.ExperimentalNativeApi
 import platform.Foundation.NSBundle
 import platform.Foundation.NSData
+import platform.Foundation.NSError
 import platform.Foundation.dataWithContentsOfFile
 
 val json = Json {
@@ -20,6 +21,12 @@ fun readJsonFile(resourceName: String): String {
     val data = NSData.dataWithContentsOfFile(path)
     val byteArray = data?.toByteArray()!!
     return byteArray.decodeToString()
+}
+
+fun readErrorResponse(resourceName: String): NSError {
+    val jsonString = readJsonFile(resourceName)
+    println(jsonString)
+    return json.decodeFromString(NSErrorSerializer, jsonString)
 }
 
 fun readCountTokensResponse(resourceName: String): CountTokensResponseObjc {

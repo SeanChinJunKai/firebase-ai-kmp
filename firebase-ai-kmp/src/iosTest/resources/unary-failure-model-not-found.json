@@ -1,0 +1,7 @@
+{
+  "domain": "FirebaseAIBridge",
+  "code": 0,
+  "userInfo": {
+    "localizedDescription": "models/test-model-name is not found for API version v1beta, or is not supported for countTokens. Call ListModels to see the list of available models and their supported methods."
+  }
+}

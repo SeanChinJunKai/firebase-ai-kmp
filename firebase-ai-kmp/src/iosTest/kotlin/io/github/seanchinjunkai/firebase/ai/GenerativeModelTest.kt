@@ -60,7 +60,6 @@ class iOSGenerativeModelTest {
         }
     }
 
-    // TODO: Refactor to have custom serializer for error
     @Test
     fun `countTokens fails with model not found`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
@@ -68,13 +67,8 @@ class iOSGenerativeModelTest {
                 prompt: String,
                 completionHandler: (iOSCountTokensResponse?, NSError?) -> Unit
             ) {
-                val error = NSError(
-                    domain = "FirebaseAIBridge",
-                    code = FirebaseAIErrorObjcServer,
-                    userInfo = mapOf(
-                        "localizedDescription" to "models/test-model-name is not found for API version v1beta, or is not supported for countTokens. Call ListModels to see the list of available models and their supported methods."
-                    )
-                )
+
+                val error = readErrorResponse("unary-failure-model-not-found")
                 completionHandler(null, error)
             }
         }
