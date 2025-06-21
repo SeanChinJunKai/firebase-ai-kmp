@@ -1,5 +1,6 @@
 # Unreleased
 * Remove redundant code in content generation functions by @SeanChinJunKai in #28
+* Allow specifying location for vertexAI backend by @SeanChinJunKai in #32
 
 # 0.2.0
 * Add iosX64 support by @SeanChinJunKai in #25
