@@ -30,12 +30,14 @@ kotlin {
         framework {
             baseName = "FirebaseAI" // Not FirebaseAIBridge due to ld: can't link a dylib with itself. same install_name as dylib being built
         }
+
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                tag = "0.2.0"
+                branch = "main"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
+
     }
 
     sourceSets {
