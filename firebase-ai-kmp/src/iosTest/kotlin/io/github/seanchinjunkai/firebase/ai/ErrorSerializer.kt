@@ -13,11 +13,12 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.json.JsonElement
 import platform.Foundation.NSError
 
 
 object NSErrorSerializer: KSerializer<NSError> {
-    private val userInfoSerializer = MapSerializer<String, String>(String.serializer(), String.serializer())
+    private val userInfoSerializer = MapSerializer<String, JsonElement>(String.serializer(), JsonElement.serializer())
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("CountTokensResponseObjc") {
         element<String>("domain")
@@ -35,7 +36,7 @@ object NSErrorSerializer: KSerializer<NSError> {
     override fun deserialize(decoder: Decoder): NSError {
         var domain: String = ""
         var code: Long = 0L
-        var userInfo: Map<String, String> = emptyMap()
+        var userInfo: Map<String, JsonElement> = emptyMap()
 
         decoder.decodeStructure(descriptor) {
             while (true) {
@@ -54,9 +55,9 @@ object NSErrorSerializer: KSerializer<NSError> {
         }
         val userInfoDict = userInfo.mapValues { (key, value) ->
             if (key == "response") {
-                json.decodeFromString(GenerateContentResponseObjcSerializer, value)
+                json.decodeFromJsonElement(GenerateContentResponseObjcSerializer, value)
             } else {
-                value
+                value.toString()
             }
         }
 

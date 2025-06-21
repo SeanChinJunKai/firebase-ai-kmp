@@ -1,0 +1,30 @@
+{
+  "domain": "FirebaseAIBridge",
+  "code": 1,
+  "userInfo": {
+    "localizedDescription": "Prompt was blocked: FAKE_NEW_BLOCK_REASON",
+    "response": {
+      "promptFeedback": {
+        "blockReason": "FAKE_NEW_BLOCK_REASON",
+        "safetyRatings": [
+          {
+            "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "probability": "NEGLIGIBLE"
+          },
+          {
+            "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+            "probability": "NEGLIGIBLE"
+          }
+        ]
+      }
+    }
+  }
+}
