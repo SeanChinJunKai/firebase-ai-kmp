@@ -19,8 +19,8 @@ val json = Json {
 }
 
 
-fun readStreamingResponse(resourceName: String, onResponse: (GenerateContentResponseObjc?) -> Unit, onComplete: (NSError?) -> Unit) {
-    val path = NSBundle.mainBundle.pathForResource("resources/$resourceName", "txt") ?: ""
+fun readStreamingResponse(backend: String, resourceName: String, onResponse: (GenerateContentResponseObjc?) -> Unit, onComplete: (NSError?) -> Unit) {
+    val path = NSBundle.mainBundle.pathForResource("resources/$backend/$resourceName", "txt") ?: ""
     val content = NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null) ?: ""
     val lines = content
         .split("\n")
@@ -37,6 +37,7 @@ fun readStreamingResponse(resourceName: String, onResponse: (GenerateContentResp
             onComplete(error)
         }
     }
+    onComplete(null)
 }
 
 inline fun <reified T> readUnaryResponse(backend: String, resourceName: String, ext: String = "json", serializer: KSerializer<T>): T {
