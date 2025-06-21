@@ -2,15 +2,18 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
+import cocoapods.FirebaseAIBridge.CountTokensResponseObjc
 import cocoapods.FirebaseAIBridge.GenerateContentResponseObjc
 import io.github.seanchinjunkai.firebase.ai.type.BlockReason
 import io.github.seanchinjunkai.firebase.ai.type.ContentModality
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
+import io.github.seanchinjunkai.firebase.ai.type.InvalidAPIKeyException
 import io.github.seanchinjunkai.firebase.ai.type.PromptBlockedException
 import io.github.seanchinjunkai.firebase.ai.type.QuotaExceededException
 import io.github.seanchinjunkai.firebase.ai.type.ResponseStoppedException
 import io.github.seanchinjunkai.firebase.ai.type.ServerException
+import io.github.seanchinjunkai.firebase.ai.type.ServiceDisabledException
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.inspectors.forAtLeastOne
 import io.kotest.matchers.should
@@ -29,8 +32,8 @@ class VertexAIUnaryTest {
     @Test
     fun `short reply`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse(backend, "unary-success-basic-reply-short")
@@ -48,8 +51,8 @@ class VertexAIUnaryTest {
     @Test
     fun `long reply`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse(backend, "unary-success-basic-reply-long")
@@ -67,8 +70,8 @@ class VertexAIUnaryTest {
     @Test
     fun `response with detailed token-based usageMetadata`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse(backend, "unary-success-basic-response-long-usage-metadata")
@@ -98,8 +101,8 @@ class VertexAIUnaryTest {
     @Test
     fun `unknown enum in safety ratings`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val response = readGenerateContentResponse(backend, "unary-success-unknown-enum-safety-ratings")
@@ -118,8 +121,8 @@ class VertexAIUnaryTest {
     @Test
     fun `unknown enum in finish reason`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val error = readErrorResponse(backend, "unary-failure-unknown-enum-finish-reason")
@@ -136,8 +139,8 @@ class VertexAIUnaryTest {
     @Test
     fun `unknown enum in block reason`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val error = readErrorResponse(backend, "unary-failure-unknown-enum-prompt-blocked")
@@ -154,8 +157,8 @@ class VertexAIUnaryTest {
     @Test
     fun `http error`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val error = readErrorResponse(backend, "unary-failure-http-error")
@@ -169,8 +172,8 @@ class VertexAIUnaryTest {
     @Test
     fun `quota exceeded`() = runTest {
         val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
-            override fun generateContentWithPrompt(
-                prompt: String,
+            override fun generateContentWithContent(
+                content: List<*>,
                 completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
             ) {
                 val error = readErrorResponse(backend, "unary-failure-quota-exceeded")
@@ -181,5 +184,48 @@ class VertexAIUnaryTest {
         shouldThrow<QuotaExceededException> { model.generateContent("prompt") }
     }
 
+    @Test
+    fun `invalid api key`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithContent(
+                content: List<*>,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val error = readErrorResponse(backend, "unary-failure-api-key")
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        shouldThrow<InvalidAPIKeyException> { model.generateContent("prompt") }
+    }
 
+    @Test
+    fun `Vertex AI API disabled`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun generateContentWithContent(
+                content: List<*>,
+                completionHandler: (GenerateContentResponseObjc?, NSError?) -> Unit
+            ) {
+                val error = readErrorResponse(backend, "unary-failure-firebasevertexai-api-not-enabled")
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        shouldThrow<ServiceDisabledException> { model.generateContent("prompt") }
+    }
+
+    @Test
+    fun `countTokens fails with model not found`() = runTest {
+        val fakeFirebaseiOSModel = object : iOSGenerativeModel() {
+            override fun countTokensWithContent(
+                content: List<*>,
+                completionHandler: (CountTokensResponseObjc?, NSError?) -> Unit
+            ) {
+                val error = readErrorResponse(backend, "unary-failure-model-not-found")
+                completionHandler(null, error)
+            }
+        }
+        val model = GenerativeModel(fakeFirebaseiOSModel)
+        shouldThrow<ServerException> { model.countTokens("prompt") }
+    }
 }

@@ -21,7 +21,7 @@ import io.github.seanchinjunkai.firebase.ai.type.QuotaExceededException
 import io.github.seanchinjunkai.firebase.ai.type.ResponseStoppedException
 import io.github.seanchinjunkai.firebase.ai.type.SerializationException
 import io.github.seanchinjunkai.firebase.ai.type.ServerException
-import io.github.seanchinjunkai.firebase.ai.type.ServiceDisabledExceptionException
+import io.github.seanchinjunkai.firebase.ai.type.ServiceDisabledException
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import io.github.seanchinjunkai.firebase.ai.type.UnsupportedUserLocationException
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -42,7 +42,7 @@ public fun NSError.toFirebaseAIException(): FirebaseAIException {
             val response = this.userInfo["response"] as? iOSGenerateContentResponse
             ResponseStoppedException(response?.toGenerateContentResponse(), message)
         }
-        FirebaseAIErrorObjcServiceDisabled -> ServiceDisabledExceptionException(message)
+        FirebaseAIErrorObjcServiceDisabled -> ServiceDisabledException(message)
         FirebaseAIErrorObjcContentBlocked -> ContentBlockedException(message)
         FirebaseAIErrorObjcQuotaExceeded -> QuotaExceededException(message)
         else -> UnknownException(message)
