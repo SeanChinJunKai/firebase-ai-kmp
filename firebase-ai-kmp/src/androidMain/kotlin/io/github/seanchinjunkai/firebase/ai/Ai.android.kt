@@ -17,9 +17,9 @@ import com.google.firebase.ai.type.FirebaseAIException as AndroidFirebaseAIExcep
 public actual object Firebase {
     // TODO: App parameter currently missing
     public actual fun ai(backend: GenerativeBackend): FirebaseAI {
-        return when (backend)  {
-            GenerativeBackend.GOOGLE_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.googleAI()))
-            GenerativeBackend.VERTEX_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.vertexAI()))
+        return when (backend.backend)  {
+            GenerativeBackendEnum.GOOGLE_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.googleAI()))
+            GenerativeBackendEnum.VERTEX_AI -> FirebaseAI(Firebase.ai(backend = com.google.firebase.ai.type.GenerativeBackend.vertexAI(backend.location)))
         }
     }
 }
