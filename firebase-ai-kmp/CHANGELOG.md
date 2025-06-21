@@ -1,4 +1,5 @@
 # Unreleased
+* Remove redundant code in content generation functions by @SeanChinJunKai in #28
 
 # 0.2.0
 * Add iosX64 support by @SeanChinJunKai in #25
