@@ -18,7 +18,7 @@ public class ResponseStoppedException(public val response: GenerateContentRespon
 
 public class RequestTimeoutException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 
-public class ServiceDisabledExceptionException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
+public class ServiceDisabledException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 
 public class ContentBlockedException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 

@@ -25,7 +25,7 @@ import io.github.seanchinjunkai.firebase.ai.type.RequestTimeoutException
 import io.github.seanchinjunkai.firebase.ai.type.ResponseStoppedException
 import io.github.seanchinjunkai.firebase.ai.type.SerializationException
 import io.github.seanchinjunkai.firebase.ai.type.ServerException
-import io.github.seanchinjunkai.firebase.ai.type.ServiceDisabledExceptionException
+import io.github.seanchinjunkai.firebase.ai.type.ServiceDisabledException
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import io.github.seanchinjunkai.firebase.ai.type.UnsupportedUserLocationException
 
@@ -39,7 +39,7 @@ public fun AndroidFirebaseAIException.toFirebaseAIException(): FirebaseAIExcepti
         is AndroidInvalidStateException -> InvalidStateException(message ?: "", cause)
         is AndroidResponseStoppedException -> ResponseStoppedException(response.toGenerateContentResponse(), message ?: "", cause)
         is AndroidRequestTimeoutException -> RequestTimeoutException(message ?: "", cause)
-        is AndroidServiceDisabledException -> ServiceDisabledExceptionException(message ?: "", cause)
+        is AndroidServiceDisabledException -> ServiceDisabledException(message ?: "", cause)
         is AndroidContentBlockedException -> ContentBlockedException(message ?: "", cause)
         is AndroidQuotaExceededException -> QuotaExceededException(message ?: "", cause)
         is AndroidInvalidLocationException -> InvalidLocationException(message ?: "", cause)

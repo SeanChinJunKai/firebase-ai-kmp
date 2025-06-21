@@ -1,0 +1,7 @@
+{
+  "domain": "",
+  "code": 5,
+  "userInfo": {
+    "localizedDescription": "Quota exceeded for quota metric 'Generate Content API requests per minute' and limit 'GenerateContent request limit per minute for a region' of service 'generativelanguage.googleapis.com' for consumer 'project_number:348715329010'."
+  }
+}

@@ -13,10 +13,14 @@ import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import io.github.seanchinjunkai.firebase.ai.type.content
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 
 public actual object Firebase {
@@ -62,29 +66,32 @@ class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeMod
         }
 
     public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
-        callbackFlow {
+        channelFlow {
             val contents = prompt.map { it.toiOSContent() }
+            val jobs = mutableListOf<Job>()
             iOSGenerativeModel.generateContentStreamWithContent(
                 contents,
                 onResponse = {
                     val response = it?.toGenerateContentResponse()
                     response?.let { element ->
-                        trySendBlocking(element)
+                        val job = launch {
+                            send(response)
+                        }
+                        jobs.add(job)
                     }
                 },
                 onComplete = { error ->
-                    if (error != null) {
-                        close(error.toFirebaseAIException())
-                    } else {
-                        close()
+                    launch {
+                        joinAll(*jobs.toTypedArray())
+                        if (error != null) {
+                            close(error.toFirebaseAIException())
+                        } else {
+                            close()
+                        }
                     }
                 }
             )
-            awaitClose {
-
-            }
         }
-
     public override suspend fun countTokens(prompt: String): CountTokensResponse =
         countTokens(content { text(prompt) })
 
