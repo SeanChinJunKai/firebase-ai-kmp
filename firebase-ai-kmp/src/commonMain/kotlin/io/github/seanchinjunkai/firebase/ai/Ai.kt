@@ -19,6 +19,9 @@ interface IGenerativeModel {
 
     public suspend fun generateContent(prompt: String): GenerateContentResponse
 
+    public fun startChat(history: List<Content> = emptyList()): Chat =
+        Chat(this, history.toMutableList())
+
     public fun generateContentStream(prompt: String): Flow<GenerateContentResponse>
 
     public suspend fun generateContent(vararg prompt: Content): GenerateContentResponse
@@ -29,3 +32,4 @@ interface IGenerativeModel {
 
     public suspend fun countTokens(vararg prompt: Content): CountTokensResponse
 }
+
