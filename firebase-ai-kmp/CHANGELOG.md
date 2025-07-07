@@ -1,4 +1,4 @@
-# Unreleased
+# 0.3.0
 * Refactor generateContentStream and add unit tests by @SeanChinJunKai in #31
 * Remove redundant code in content generation functions by @SeanChinJunKai in #28
 * Allow specifying location for vertexAI backend by @SeanChinJunKai in #32

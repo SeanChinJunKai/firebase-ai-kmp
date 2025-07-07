@@ -25,7 +25,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     - Add the following to your `libs.versions.toml`:
     ```
     [versions]
-    firebase-ai-kmp = "0.2.0"
+    firebase-ai-kmp = "0.3.0"
     
     [libraries]
     firebase-ai-kmp = { module = "io.github.seanchinjunkai:firebase-ai-kmp", version.ref = "firebase-ai-kmp" }
@@ -53,7 +53,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
         - Follow these instructions if your Kotlin Multiplatform module is integrated directly with your iOS project as a local iOS framework. That is, Xcode is calling the embedAndSignAppleFrameworkForXcode Gradle task as part of the build. At the time of writing, if you generated your Kotlin Multiplatform project using the [online wizard](https://kmp.jetbrains.com/), this is how it's set up.
         - In this scenario, you need to specify the transitive dependency on FirebaseAIBridge in your Podfile. Add the following:
           ```
-          pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :tag => '0.2.0'
+          pod 'FirebaseAIBridge', :git => 'https://github.com/SeanChinJunKai/FirebaseAIBridge.git', :tag => '0.3.0'
           ```
 
 6. iOS Setup
@@ -61,7 +61,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     - Download `GoogleService-Info.plist` and place it under `iosApp/iosApp` directory.
     - Add the FirebaseCore depedency to your `Podfile`:
     ```
-    pod 'FirebaseCore', :git => 'https://github.com/firebase/firebase-ios-sdk.git', :tag => '11.14.0'
+    pod 'FirebaseCore', :git => 'https://github.com/firebase/firebase-ios-sdk.git', :tag => '11.15.0'
     ```
     - Add the following initialization code in `iosApp/iosApp/iOSApp.swift`
     ```
@@ -101,7 +101,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
     - Add the following to your `libs.versions.toml`:
     ```
     [versions]
-    googleServices = "4.4.2"
+    googleServices = "4.4.3"
     
     [plugins]
     googleServices = { id = "com.google.gms.google-services", version.ref = "googleServices" }
@@ -132,7 +132,7 @@ Build AI-powered mobile and web apps and features with the Gemini and Imagen mod
 ```
 // Initialize the Gemini Developer API backend service
 // Create a `GenerativeModel` instance with a model that supports your use case
-val model = Firebase.ai(GenerativeBackend.GOOGLE_AI).generativeModel("gemini-2.0-flash")
+val model = Firebase.ai(GenerativeBackend.googleAI()).generativeModel("gemini-2.0-flash")
 
 val prompt = "Write a story about a magic backpack."
 val response = model.generateContent(prompt)
