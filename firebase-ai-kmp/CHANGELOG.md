@@ -1,5 +1,6 @@
 # Unreleased
 * Add multi-turn chat functionality by @SeanChinJunKai in #30
+* Deprecate totalBillableCharacters in CountTokensResponse by @SeanChinJunKai
 
 # 0.3.0
 * Refactor generateContentStream and add unit tests by @SeanChinJunKai in #31

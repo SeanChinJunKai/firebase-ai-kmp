@@ -215,7 +215,6 @@ public fun iOSHarmSeverity.toHarmSeverity(): HarmSeverity {
 public fun iOSCountTokensResponse.toCountTokensResponse(): CountTokensResponse {
     return CountTokensResponse(
         totalTokens = this.totalTokens().toInt(),
-        totalBillableCharacters = this.totalBillableCharacters()?.intValue,
         promptTokensDetails = this.promptTokenDetails().map {
             val tokenCount = it as iOSModalityTokenCount
             tokenCount.toModalityTokenCount()

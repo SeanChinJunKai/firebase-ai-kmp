@@ -190,7 +190,6 @@ public fun AndroidFinishReason.toFinishReason(): FinishReason {
 public fun AndroidCountTokensResponse.toCountTokensResponse(): CountTokensResponse {
     return CountTokensResponse(
         totalTokens = this.totalTokens,
-        totalBillableCharacters = this.totalBillableCharacters,
         promptTokensDetails = this.promptTokensDetails.map { it.toModalityTokenCount() }
     )
 }
