@@ -1,4 +1,4 @@
-# 0.4.0
+# Unreleased
 * Add multi-turn chat functionality by @SeanChinJunKai in #30
 
 # 0.3.0
