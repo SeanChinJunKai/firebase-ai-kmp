@@ -21,7 +21,6 @@ import kotlin.experimental.ExperimentalNativeApi
 object CountTokensResponseObjcSerializer : KSerializer<CountTokensResponseObjc> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("CountTokensResponseObjc") {
         element<Long>("totalTokens")
-        element<Long?>("totalBillableCharacters")
         element("promptTokensDetails", ListSerializer(ModalityTokenCountObjcSerializer).descriptor)
     }
 
@@ -34,15 +33,13 @@ object CountTokensResponseObjcSerializer : KSerializer<CountTokensResponseObjc> 
 
     override fun deserialize(decoder: Decoder): CountTokensResponseObjc {
         var totalTokens = 0L
-        var totalBillableCharacters: Long? = null
         var promptTokenDetails: List<ModalityTokenCountObjc> = emptyList()
 
         decoder.decodeStructure(descriptor) {
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> totalTokens = decodeLongElement(descriptor, index)
-                    1 -> totalBillableCharacters = decodeLongElement(descriptor, index)
-                    2 -> promptTokenDetails = decodeSerializableElement(
+                    1 -> promptTokenDetails = decodeSerializableElement(
                         descriptor,
                         index,
                         ListSerializer(ModalityTokenCountObjcSerializer)
@@ -53,8 +50,7 @@ object CountTokensResponseObjcSerializer : KSerializer<CountTokensResponseObjc> 
             }
         }
 
-        val nsNumberBillable = totalBillableCharacters?.let { NSNumber(long = it) }
-        return CountTokensResponseObjc(totalTokens, nsNumberBillable, promptTokenDetails)
+        return CountTokensResponseObjc(totalTokens, promptTokenDetails)
     }
 }
 
