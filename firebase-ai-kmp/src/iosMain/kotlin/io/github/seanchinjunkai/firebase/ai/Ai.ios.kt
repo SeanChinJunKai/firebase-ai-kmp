@@ -12,17 +12,23 @@ import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
+import io.github.seanchinjunkai.firebase.ai.type.content
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 
 
 public actual object Firebase {
     public actual fun ai(backend: GenerativeBackend): FirebaseAI {
-        return when (backend) {
-            GenerativeBackend.GOOGLE_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcGoogleAI))
-            GenerativeBackend.VERTEX_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjcVertexAI))
+        return when (backend.backend) {
+            GenerativeBackendEnum.GOOGLE_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(GenerativeBackendObjc.googleAI()))
+            GenerativeBackendEnum.VERTEX_AI -> FirebaseAI(FirebaseObjc.aiWithBackend(
+                GenerativeBackendObjc.vertexAIWithLocation(backend.location)))
         }
     }
 }
@@ -37,41 +43,10 @@ actual class FirebaseAI internal constructor(val iOSFirebaseAI: FirebaseAIObjc) 
 
 class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc): IGenerativeModel {
     public override suspend fun generateContent(prompt: String): GenerateContentResponse =
-        suspendCancellableCoroutine { continuation ->
-            iOSGenerativeModel.generateContentWithPrompt(
-                prompt,
-                completionHandler = { result: GenerateContentResponseObjc?, error: NSError? ->
-                    val result = result?.toGenerateContentResponse()
-                    when {
-                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
-                        result != null -> continuation.resume(result)
-                        else -> continuation.resumeWithException(UnknownException("No generateContent result and no error returned."))
-                    }
-                })
-        }
+        generateContent(content { text(prompt) })
 
     public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
-        callbackFlow {
-            iOSGenerativeModel.generateContentStreamWithPrompt(
-                prompt,
-                onResponse = {
-                    val response = it?.toGenerateContentResponse()
-                    response?.let { element ->
-                        trySendBlocking(element)
-                    }
-                },
-                onComplete = { error ->
-                    if (error != null) {
-                        close(error.toFirebaseAIException())
-                    } else {
-                        close()
-                    }
-                }
-            )
-            awaitClose {
-
-            }
-        }
+        generateContentStream(content { text(prompt) })
 
 
 
@@ -91,41 +66,34 @@ class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeMod
         }
 
     public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
-        callbackFlow {
+        channelFlow {
             val contents = prompt.map { it.toiOSContent() }
+            val jobs = mutableListOf<Job>()
             iOSGenerativeModel.generateContentStreamWithContent(
                 contents,
                 onResponse = {
                     val response = it?.toGenerateContentResponse()
                     response?.let { element ->
-                        trySendBlocking(element)
+                        val job = launch {
+                            send(response)
+                        }
+                        jobs.add(job)
                     }
                 },
                 onComplete = { error ->
-                    if (error != null) {
-                        close(error.toFirebaseAIException())
-                    } else {
-                        close()
+                    launch {
+                        joinAll(*jobs.toTypedArray())
+                        if (error != null) {
+                            close(error.toFirebaseAIException())
+                        } else {
+                            close()
+                        }
                     }
                 }
             )
-            awaitClose {
-
-            }
         }
-
     public override suspend fun countTokens(prompt: String): CountTokensResponse =
-        suspendCancellableCoroutine { continuation ->
-            iOSGenerativeModel.countTokensWithPrompt(
-                prompt,
-                completionHandler = { result: CountTokensResponseObjc?, error: NSError? ->
-                    when {
-                        error != null -> continuation.resumeWithException(error.toFirebaseAIException())
-                        result != null -> continuation.resume(result.toCountTokensResponse())
-                        else -> continuation.resumeWithException(UnknownException("No countTokens result and no error returned."))
-                    }
-                })
-        }
+        countTokens(content { text(prompt) })
 
     public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->

@@ -1,0 +1,1 @@
+{"domain": "FirebaseAIBridge", "code": 4, "userInfo": {"localizedDescription": "API key not valid. Please pass a valid API key."}}

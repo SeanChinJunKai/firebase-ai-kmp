@@ -1,0 +1,8 @@
+data: {"candidates": [{"content": {"role": "model","parts": [{"text": "Okay"}]}}],"usageMetadata": {"trafficType": "ON_DEMAND"},"modelVersion": "gemini-2.0-flash","createTime": "2025-05-05T21:30:47.262229Z","responseId": "By4ZaNWAEPKQhMIP4KS3oAc"}
+
+data: {"candidates": [{"content": {"role": "model","parts": [{"text": ", let'"}]}}],"usageMetadata": {"trafficType": "ON_DEMAND"},"modelVersion": "gemini-2.0-flash","createTime": "2025-05-05T21:30:47.262229Z","responseId": "By4ZaNWAEPKQhMIP4KS3oAc"}
+
+data: {"candidates": [{"content": {"role": "model","parts": [{"text": "s brew a decent cup of coffee! Here's a breakdown of how to"}]}}],"usageMetadata": {"trafficType": "ON_DEMAND"},"modelVersion": "gemini-2.0-flash","createTime": "2025-05-05T21:30:47.262229Z","responseId": "By4ZaNWAEPKQhMIP4KS3oAc"}
+
+data: {"candidates": [{"content": {"role": "model","parts": [{"text": " a little practice, you'll be brewing delicious coffee in no time.\n"}]},"finishReason": "STOP"}],"usageMetadata": {"promptTokenCount": 12,"candidatesTokenCount": 1706,"totalTokenCount": 1718,"trafficType": "ON_DEMAND","promptTokensDetails": [{"modality": "TEXT","tokenCount": 12}],"candidatesTokensDetails": [{"modality": "TEXT","tokenCount": 1706}]},"modelVersion": "gemini-2.0-flash","createTime": "2025-05-05T21:30:47.262229Z","responseId": "By4ZaNWAEPKQhMIP4KS3oAc"}
+

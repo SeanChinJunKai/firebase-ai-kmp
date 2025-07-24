@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "io.github.seanchinjunkai"
-version = "0.2.0"
+version = "0.3.0"
 
 kotlin {
     androidTarget {
@@ -30,12 +30,14 @@ kotlin {
         framework {
             baseName = "FirebaseAI" // Not FirebaseAIBridge due to ld: can't link a dylib with itself. same install_name as dylib being built
         }
+
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                tag = "0.2.0"
+                tag = "0.3.0"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
+
     }
 
     sourceSets {
@@ -54,9 +56,9 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation(libs.kotlin.test)
                 implementation(libs.kotlinx.coroutines.test)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotest.assertions.core)
             }
         }
     }

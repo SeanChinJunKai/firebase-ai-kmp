@@ -1,0 +1,1 @@
+{"domain": "FirebaseAIBridge", "code": "0", "userInfo": {"localizedDescription": "models/unknown is not found for API version v1, or is not supported for GenerateContent. Call ListModels to see the list of available models and their supported methods."}}

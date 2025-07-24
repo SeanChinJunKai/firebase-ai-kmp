@@ -1,0 +1,7 @@
+{
+  "domain": "FirebaseAIBridge",
+  "code": 0,
+  "userInfo": {
+    "localizedDescription": "$grpcMessage"
+  }
+}
