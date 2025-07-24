@@ -1,3 +1,6 @@
+# 0.4.0
+* Add multi-turn chat functionality by @SeanChinJunKai in #30
+
 # 0.3.0
 * Refactor generateContentStream and add unit tests by @SeanChinJunKai in #31
 * Remove redundant code in content generation functions by @SeanChinJunKai in #28
