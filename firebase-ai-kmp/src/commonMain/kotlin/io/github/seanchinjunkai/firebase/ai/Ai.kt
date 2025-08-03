@@ -12,15 +12,14 @@ expect object Firebase {
 
 
 expect class FirebaseAI {
-    fun generativeModel(modelName: String): IGenerativeModel
+    fun generativeModel(modelName: String): GenerativeModel
 }
 
-interface IGenerativeModel {
+expect class GenerativeModel {
 
     public suspend fun generateContent(prompt: String): GenerateContentResponse
 
-    public fun startChat(history: List<Content> = emptyList()): Chat =
-        Chat(this, history.toMutableList())
+    public fun startChat(history: List<Content> = emptyList()): Chat
 
     public fun generateContentStream(prompt: String): Flow<GenerateContentResponse>
 

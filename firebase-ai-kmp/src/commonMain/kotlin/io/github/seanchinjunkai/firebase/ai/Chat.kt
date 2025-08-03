@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.sync.Semaphore
 
 public class Chat(
-    private val model: IGenerativeModel,
+    private val model: GenerativeModel,
     public val history: MutableList<Content> = ArrayList()
 ) {
     private var lock = Semaphore(1)
