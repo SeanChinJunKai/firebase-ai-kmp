@@ -96,11 +96,10 @@ private constructor(
     public companion object {
         public fun builder(): GenerationConfig.Builder = Builder()
     }
+}
 
-    public fun generationConfig(init: GenerationConfig.Builder.() -> Unit): GenerationConfig {
-        val builder = GenerationConfig.builder()
-        builder.init()
-        return builder.build()
-    }
-
+public fun generationConfig(init: GenerationConfig.Builder.() -> Unit): GenerationConfig {
+    val builder = GenerationConfig.builder()
+    builder.init()
+    return builder.build()
 }

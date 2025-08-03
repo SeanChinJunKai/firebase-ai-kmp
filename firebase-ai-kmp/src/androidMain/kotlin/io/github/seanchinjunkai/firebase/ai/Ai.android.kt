@@ -5,6 +5,7 @@ import com.google.firebase.ai.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -28,8 +29,16 @@ public actual object Firebase {
 
 actual class FirebaseAI internal constructor(internal val androidFirebaseAI: AndroidFirebaseAI) {
     // TODO: Add missing parameters
-    public actual fun generativeModel(modelName: String): GenerativeModel {
-        return GenerativeModel(androidFirebaseAI.generativeModel(modelName))
+    public actual fun generativeModel(
+        modelName: String,
+        generationConfig: GenerationConfig?,
+    ): GenerativeModel {
+        return GenerativeModel(
+            androidFirebaseAI.generativeModel(
+                modelName = modelName,
+                generationConfig = generationConfig?.toAndroidGenerationConfig()
+            )
+        )
     }
 }
 

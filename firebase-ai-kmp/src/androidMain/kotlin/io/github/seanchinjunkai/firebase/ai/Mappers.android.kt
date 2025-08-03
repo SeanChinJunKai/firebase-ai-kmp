@@ -1,6 +1,7 @@
 package io.github.seanchinjunkai.firebase.ai
 
 import com.google.firebase.ai.type.StringFormat
+import com.google.firebase.ai.type.generationConfig
 import com.google.firebase.ai.type.thinkingConfig
 import io.github.seanchinjunkai.firebase.ai.type.BlockReason
 import io.github.seanchinjunkai.firebase.ai.type.Candidate
@@ -13,6 +14,7 @@ import io.github.seanchinjunkai.firebase.ai.type.Date
 import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
 import io.github.seanchinjunkai.firebase.ai.type.HarmProbability
 import io.github.seanchinjunkai.firebase.ai.type.HarmSeverity
@@ -52,6 +54,7 @@ import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
 import com.google.firebase.ai.type.ResponseModality as AndroidResponseModality
 import com.google.firebase.ai.type.ThinkingConfig as AndroidThinkingConfig
 import com.google.firebase.ai.type.Schema as AndroidSchema
+import com.google.firebase.ai.type.GenerationConfig as AndroidGenerationConfig
 
 
 /* Mapping from firebase-android-sdk types to commonMain types */
@@ -241,6 +244,23 @@ public fun Part.toAndroidPart(): AndroidPart {
         is InlineDataPart -> AndroidInlineDataPart(this.inlineData, this.mimeType)
         is ImagePart -> AndroidImagePart(this.image)
         else -> throw error("Unknown prompt part type")
+    }
+}
+
+public fun GenerationConfig.toAndroidGenerationConfig(): AndroidGenerationConfig {
+    return generationConfig {
+        setTemperature(this@toAndroidGenerationConfig.temperature)
+        setTopK(this@toAndroidGenerationConfig.topK)
+        setTopP(this@toAndroidGenerationConfig.topP)
+        setCandidateCount(this@toAndroidGenerationConfig.candidateCount)
+        setMaxOutputTokens(this@toAndroidGenerationConfig.maxOutputTokens)
+        setPresencePenalty(this@toAndroidGenerationConfig.presencePenalty)
+        setFrequencyPenalty(this@toAndroidGenerationConfig.frequencyPenalty)
+        setStopSequences(this@toAndroidGenerationConfig.stopSequences)
+        setResponseMimeType(this@toAndroidGenerationConfig.responseMimeType)
+        setResponseSchema(this@toAndroidGenerationConfig.responseSchema?.toAndroidSchema())
+        setResponseModalities(this@toAndroidGenerationConfig.responseModalities?.map { it.toAndroidResponseModality() })
+        setThinkingConfig(this@toAndroidGenerationConfig.thinkingConfig?.toAndroidThinkingConfig())
     }
 }
 
