@@ -11,6 +11,8 @@ ios-deploymentTarget = "15.0"
 kotlinx-datetime = "0.6.2"
 kotlinx-serialization = "1.8.1"
 kotest = "5.9.0"
+binary-compatibility-validator = "0.18.1"
+metalava = "0.4.0-alpha03"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -29,3 +31,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 vanniktech-mavenPublish = { id = "com.vanniktech.maven.publish", version = "0.32.0" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+metalava = { id = "me.tylerbwong.gradle.metalava", version.ref = "metalava" }

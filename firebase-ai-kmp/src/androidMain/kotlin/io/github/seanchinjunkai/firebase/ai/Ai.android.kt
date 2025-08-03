@@ -28,14 +28,14 @@ public actual object Firebase {
 
 actual class FirebaseAI internal constructor(internal val androidFirebaseAI: AndroidFirebaseAI) {
     // TODO: Add missing parameters
-    public actual fun generativeModel(modelName: String): IGenerativeModel {
+    public actual fun generativeModel(modelName: String): GenerativeModel {
         return GenerativeModel(androidFirebaseAI.generativeModel(modelName))
     }
 }
 
 
-class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel): IGenerativeModel {
-    public override suspend fun generateContent(prompt: String): GenerateContentResponse {
+actual class GenerativeModel internal constructor(internal val androidGenerativeModel: AndroidGenerativeModel) {
+    public actual suspend fun generateContent(prompt: String): GenerateContentResponse {
         try {
             val androidResponse = androidGenerativeModel.generateContent(prompt)
             return androidResponse.toGenerateContentResponse()
@@ -44,7 +44,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
         }
     }
 
-    public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
+    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> {
         val androidFlowResponse = androidGenerativeModel.generateContentStream(prompt)
         return androidFlowResponse
             .catch { throwable ->
@@ -56,7 +56,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
             }
     }
 
-    public override suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
+    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
             val androidResponse = androidGenerativeModel.generateContent(*input)
@@ -66,7 +66,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
         }
     }
 
-    public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
+    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
         val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
         return androidFlowResponse
@@ -80,7 +80,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
 
     }
 
-    public override suspend fun countTokens(prompt: String): CountTokensResponse {
+    public actual suspend fun countTokens(prompt: String): CountTokensResponse {
         try {
             return androidGenerativeModel.countTokens(prompt).toCountTokensResponse()
         } catch (e: AndroidFirebaseAIException) {
@@ -88,7 +88,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
         }
     }
 
-    public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
             return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
@@ -96,4 +96,7 @@ class GenerativeModel internal constructor(internal val androidGenerativeModel: 
             throw e.toFirebaseAIException()
         }
     }
+
+    public actual fun startChat(history: List<Content>): Chat =
+        Chat(this, history.toMutableList())
 }

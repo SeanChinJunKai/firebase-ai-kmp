@@ -1,6 +1,6 @@
 package io.github.seanchinjunkai.firebase.ai.type
 
-sealed class FirebaseAIException(message: String, cause: Throwable? = null): Exception(message, cause)
+open class FirebaseAIException(message: String, cause: Throwable? = null): RuntimeException(message, cause)
 
 public class SerializationException(message: String, cause: Throwable? = null): FirebaseAIException(message, cause)
 

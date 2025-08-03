@@ -14,10 +14,7 @@ import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import io.github.seanchinjunkai.firebase.ai.type.content
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -35,22 +32,22 @@ public actual object Firebase {
 
 
 actual class FirebaseAI internal constructor(val iOSFirebaseAI: FirebaseAIObjc) {
-    public actual fun generativeModel(modelName: String): IGenerativeModel {
+    public actual fun generativeModel(modelName: String): GenerativeModel {
         return GenerativeModel(iOSFirebaseAI.generativeModelWithModelName(modelName))
     }
 }
 
 
-class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc): IGenerativeModel {
-    public override suspend fun generateContent(prompt: String): GenerateContentResponse =
+actual class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeModelObjc) {
+    public actual suspend fun generateContent(prompt: String): GenerateContentResponse =
         generateContent(content { text(prompt) })
 
-    public override fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
+    public actual fun generateContentStream(prompt: String): Flow<GenerateContentResponse> =
         generateContentStream(content { text(prompt) })
 
 
 
-    public override suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
+    public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.generateContentWithContent(
@@ -65,7 +62,7 @@ class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeMod
                 })
         }
 
-    public override fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
+    public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> =
         channelFlow {
             val contents = prompt.map { it.toiOSContent() }
             val jobs = mutableListOf<Job>()
@@ -92,10 +89,10 @@ class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeMod
                 }
             )
         }
-    public override suspend fun countTokens(prompt: String): CountTokensResponse =
+    public actual suspend fun countTokens(prompt: String): CountTokensResponse =
         countTokens(content { text(prompt) })
 
-    public override suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
+    public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse =
         suspendCancellableCoroutine { continuation ->
             val contents = prompt.map { it.toiOSContent() }
             iOSGenerativeModel.countTokensWithContent(
@@ -108,4 +105,7 @@ class GenerativeModel internal constructor(val iOSGenerativeModel: GenerativeMod
                     }
                 })
         }
+
+    public actual fun startChat(history: List<Content>): Chat =
+        Chat(this, history.toMutableList())
 }

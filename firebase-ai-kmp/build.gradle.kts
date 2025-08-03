@@ -1,4 +1,5 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import me.tylerbwong.gradle.metalava.Format
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.metalava)
 }
 
 group = "io.github.seanchinjunkai"
@@ -122,4 +124,9 @@ listOf(
     }
 
     tasks.findByName("${platform}Test")!!.dependsOn(copyIosTestResources)
+}
+
+metalava {
+    format.set(Format.V3)
+    filename.set("api/api.txt")
 }

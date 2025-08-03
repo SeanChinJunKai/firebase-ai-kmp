@@ -1,7 +1,5 @@
 package io.github.seanchinjunkai.firebase.ai.type
 
-import io.github.seanchinjunkai.firebase.ai.TextPart
-
 // TODO: Think about how to include text
 public class GenerateContentResponse(
     public val candidates: List<Candidate>,
