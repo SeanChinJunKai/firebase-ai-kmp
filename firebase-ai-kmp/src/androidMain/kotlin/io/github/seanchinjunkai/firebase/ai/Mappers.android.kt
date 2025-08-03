@@ -1,5 +1,7 @@
 package io.github.seanchinjunkai.firebase.ai
 
+import com.google.firebase.ai.type.StringFormat
+import com.google.firebase.ai.type.thinkingConfig
 import io.github.seanchinjunkai.firebase.ai.type.BlockReason
 import io.github.seanchinjunkai.firebase.ai.type.Candidate
 import io.github.seanchinjunkai.firebase.ai.type.Citation
@@ -19,8 +21,11 @@ import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.ModalityTokenCount
 import io.github.seanchinjunkai.firebase.ai.type.Part
 import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
+import io.github.seanchinjunkai.firebase.ai.type.ResponseModality
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
+import io.github.seanchinjunkai.firebase.ai.type.Schema
 import io.github.seanchinjunkai.firebase.ai.type.TextPart
+import io.github.seanchinjunkai.firebase.ai.type.ThinkingConfig
 import io.github.seanchinjunkai.firebase.ai.type.UsageMetadata
 import java.util.Calendar
 import com.google.firebase.ai.type.CountTokensResponse as AndroidCountTokensResponse
@@ -44,6 +49,9 @@ import com.google.firebase.ai.type.TextPart as AndroidTextPart
 import com.google.firebase.ai.type.ImagePart as AndroidImagePart
 import com.google.firebase.ai.type.FileDataPart as AndroidFileDataPart
 import com.google.firebase.ai.type.InlineDataPart as AndroidInlineDataPart
+import com.google.firebase.ai.type.ResponseModality as AndroidResponseModality
+import com.google.firebase.ai.type.ThinkingConfig as AndroidThinkingConfig
+import com.google.firebase.ai.type.Schema as AndroidSchema
 
 
 /* Mapping from firebase-android-sdk types to commonMain types */
@@ -233,5 +241,117 @@ public fun Part.toAndroidPart(): AndroidPart {
         is InlineDataPart -> AndroidInlineDataPart(this.inlineData, this.mimeType)
         is ImagePart -> AndroidImagePart(this.image)
         else -> throw error("Unknown prompt part type")
+    }
+}
+
+public fun ResponseModality.toAndroidResponseModality(): AndroidResponseModality {
+    return when (this) {
+        ResponseModality.TEXT -> AndroidResponseModality.TEXT
+        ResponseModality.IMAGE -> AndroidResponseModality.IMAGE
+        ResponseModality.AUDIO -> AndroidResponseModality.AUDIO
+        else -> error("Unknown ResponseModality")
+    }
+}
+
+public fun ThinkingConfig.toAndroidThinkingConfig(): AndroidThinkingConfig? {
+    return thinkingBudget?.let {
+        thinkingConfig {
+            AndroidThinkingConfig.Builder().setThinkingBudget(it)
+        }
+    }
+}
+
+
+public fun Schema.toAndroidSchema(): AndroidSchema {
+    return when (this.type) {
+        "BOOLEAN" -> {
+            AndroidSchema.boolean(
+                description = description,
+                nullable = nullable!!,
+                title = title
+            )
+        }
+        "INTEGER" -> {
+            if (format == "int32") {
+                AndroidSchema.integer(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum,
+                    maximum = maximum
+                )
+            } else {
+                AndroidSchema.long(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum,
+                    maximum = maximum
+                )
+            }
+        }
+        "NUMBER" -> {
+            if (format == "float") {
+                AndroidSchema.float(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum,
+                    maximum = maximum
+                )
+            } else {
+                AndroidSchema.double(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum,
+                    maximum = maximum
+                )
+            }
+        }
+
+        "STRING" -> {
+            if (format == "enum") {
+                AndroidSchema.enumeration(
+                    values = enum!!,
+                    description = description,
+                    nullable = nullable!!,
+                    title = title
+                )
+            } else {
+                AndroidSchema.string(
+                    description = description,
+                    nullable = nullable!!,
+                    format = format?.let { StringFormat.Custom(it) },
+                    title = title,
+                )
+            }
+        }
+        "OBJECT" -> {
+            AndroidSchema.obj(
+                properties = properties!!.mapValues { it.value.toAndroidSchema() },
+                optionalProperties = properties.keys.filter { required!!.contains(it) != true  },
+                description = description,
+                nullable = nullable!!,
+                title = title,
+            )
+        }
+        "ARRAY" -> {
+            AndroidSchema.array(
+                items = items?.toAndroidSchema()!!,
+                description = description,
+                nullable = nullable!!,
+                title = title,
+                minItems = minItems,
+                maxItems = maxItems
+            )
+        }
+        "ANYOF" -> {
+            AndroidSchema.anyOf(
+               schemas = anyOf?.map { it.toAndroidSchema() } ?: emptyList()
+            )
+        }
+
+        else -> error("Unknown Schema Type")
     }
 }
