@@ -2,7 +2,11 @@ package io.github.seanchinjunkai.firebase.ai
 
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.ImagePart
+import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.InvalidStateException
+import io.github.seanchinjunkai.firebase.ai.type.PlatformImage
+import io.github.seanchinjunkai.firebase.ai.type.TextPart
 import io.github.seanchinjunkai.firebase.ai.type.content
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onCompletion

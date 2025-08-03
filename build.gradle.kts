@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.vanniktech.mavenPublish) apply false
     alias(libs.plugins.kotlinCocoapods) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.metalava) apply false
     kotlin("jvm")
 }
 dependencies {

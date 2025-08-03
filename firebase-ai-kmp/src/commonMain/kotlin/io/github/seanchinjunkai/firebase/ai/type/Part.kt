@@ -1,4 +1,4 @@
-package io.github.seanchinjunkai.firebase.ai
+package io.github.seanchinjunkai.firebase.ai.type
 
 public interface Part {}
 
