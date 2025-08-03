@@ -8,14 +8,19 @@ import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.ContentModality
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.Date
+import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
 import io.github.seanchinjunkai.firebase.ai.type.HarmProbability
 import io.github.seanchinjunkai.firebase.ai.type.HarmSeverity
+import io.github.seanchinjunkai.firebase.ai.type.ImagePart
+import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.ModalityTokenCount
+import io.github.seanchinjunkai.firebase.ai.type.Part
 import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
+import io.github.seanchinjunkai.firebase.ai.type.TextPart
 import io.github.seanchinjunkai.firebase.ai.type.UsageMetadata
 import java.util.Calendar
 import com.google.firebase.ai.type.CountTokensResponse as AndroidCountTokensResponse
