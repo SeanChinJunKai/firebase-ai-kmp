@@ -11,6 +11,7 @@ import cocoapods.FirebaseAIBridge.*
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import io.github.seanchinjunkai.firebase.ai.type.content
 import kotlinx.coroutines.Job
@@ -32,8 +33,11 @@ public actual object Firebase {
 
 
 actual class FirebaseAI internal constructor(val iOSFirebaseAI: FirebaseAIObjc) {
-    public actual fun generativeModel(modelName: String): GenerativeModel {
-        return GenerativeModel(iOSFirebaseAI.generativeModelWithModelName(modelName))
+    public actual fun generativeModel(
+        modelName: String,
+        generationConfig: GenerationConfig?
+    ): GenerativeModel {
+        return GenerativeModel(iOSFirebaseAI.generativeModelWithModelName(modelName, generationConfig?.toiOSGenerationConfig()))
     }
 }
 

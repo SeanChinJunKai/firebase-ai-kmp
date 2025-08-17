@@ -68,7 +68,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-            val androidResponse = androidGenerativeModel.generateContent(*input)
+            val androidResponse = androidGenerativeModel.generateContent(input.first(), *input.drop(1).toTypedArray())
             return androidResponse.toGenerateContentResponse()
         } catch (e: AndroidFirebaseAIException) {
             throw e.toFirebaseAIException()
@@ -77,7 +77,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
 
     public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-        val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(input.first(), *input.drop(1).toTypedArray())
         return androidFlowResponse
             .catch { throwable ->
                 val firebaseException = throwable as? AndroidFirebaseAIException
@@ -100,7 +100,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
     public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-            return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
+            return androidGenerativeModel.countTokens(input.first(), *input.drop(1).toTypedArray()).toCountTokensResponse()
         } catch (e: AndroidFirebaseAIException) {
             throw e.toFirebaseAIException()
         }

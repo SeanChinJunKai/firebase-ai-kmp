@@ -20,7 +20,7 @@ expect class FirebaseAI {
 }
 
 expect class GenerativeModel {
-
+    // TODO: Update to follow firebase-android-sdk's overloaded methods
     public suspend fun generateContent(prompt: String): GenerateContentResponse
 
     public fun startChat(history: List<Content> = emptyList()): Chat
