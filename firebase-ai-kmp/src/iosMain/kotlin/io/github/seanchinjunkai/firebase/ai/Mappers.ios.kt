@@ -2,6 +2,7 @@
 
 package io.github.seanchinjunkai.firebase.ai
 
+import platform.Foundation.NSNumber
 import cocoapods.FirebaseAIBridge.FileDataPartObjc
 import cocoapods.FirebaseAIBridge.ImagePartObjc
 import cocoapods.FirebaseAIBridge.InlineDataPartObjc
@@ -19,6 +20,7 @@ import io.github.seanchinjunkai.firebase.ai.type.Date
 import io.github.seanchinjunkai.firebase.ai.type.FileDataPart
 import io.github.seanchinjunkai.firebase.ai.type.FinishReason
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.HarmCategory
 import io.github.seanchinjunkai.firebase.ai.type.HarmProbability
 import io.github.seanchinjunkai.firebase.ai.type.HarmSeverity
@@ -27,8 +29,11 @@ import io.github.seanchinjunkai.firebase.ai.type.InlineDataPart
 import io.github.seanchinjunkai.firebase.ai.type.ModalityTokenCount
 import io.github.seanchinjunkai.firebase.ai.type.Part
 import io.github.seanchinjunkai.firebase.ai.type.PromptFeedback
+import io.github.seanchinjunkai.firebase.ai.type.ResponseModality
 import io.github.seanchinjunkai.firebase.ai.type.SafetyRating
+import io.github.seanchinjunkai.firebase.ai.type.Schema
 import io.github.seanchinjunkai.firebase.ai.type.TextPart
+import io.github.seanchinjunkai.firebase.ai.type.ThinkingConfig
 import io.github.seanchinjunkai.firebase.ai.type.UsageMetadata
 import kotlinx.cinterop.ExperimentalForeignApi
 import cocoapods.FirebaseAIBridge.CountTokensResponseObjc as iOSCountTokensResponse
@@ -52,6 +57,12 @@ import cocoapods.FirebaseAIBridge.FinishReasonObjc as iOSFinishReason
 import cocoapods.FirebaseAIBridge.HarmCategoryObjc as iOSHarmCategory
 import cocoapods.FirebaseAIBridge.HarmProbabilityObjc as iOSHarmProbability
 import cocoapods.FirebaseAIBridge.HarmSeverityObjc as iOSHarmSeverity
+import cocoapods.FirebaseAIBridge.GenerationConfigObjc as iOSGenerationConfig
+import cocoapods.FirebaseAIBridge.SchemaObjc as iOSSchema
+import cocoapods.FirebaseAIBridge.ResponseModalityObjc as iOSResponseModality
+import cocoapods.FirebaseAIBridge.ThinkingConfigObjc as iOSThinkingConfig
+import cocoapods.FirebaseAIBridge.StringFormatObjc as iOSStringFormat
+
 
 /* Mapping from firebase-ios-sdk types to commonMain types */
 public fun iOSGenerateContentResponse.toGenerateContentResponse(): GenerateContentResponse {
@@ -261,5 +272,132 @@ public fun Part.toiOSPart(): PartObjc {
         is InlineDataPart -> InlineDataPartObjc(this.inlineData.toNSData(), this.mimeType)
         is ImagePart -> ImagePartObjc(this.image)
         else -> throw error("Unknown prompt part type")
+    }
+}
+
+public fun GenerationConfig.toiOSGenerationConfig(): iOSGenerationConfig {
+    return iOSGenerationConfig(
+        temperature = temperature?.let { NSNumber(it) },
+        topP = topP?.let { NSNumber(it) },
+        topK = topK?.let { NSNumber(it) },
+        candidateCount = candidateCount?.let { NSNumber(it) },
+        maxOutputTokens = maxOutputTokens?.let { NSNumber(it) },
+        presencePenalty = presencePenalty?.let { NSNumber(it) },
+        frequencyPenalty = frequencyPenalty?.let { NSNumber(it) },
+        stopSequences = stopSequences,
+        responseMIMEType = responseMimeType,
+        responseSchema = responseSchema?.toiOSSchema(),
+        responseModalities = responseModalities?.map { it.toiOSResponseModality() },
+        thinkingConfig = thinkingConfig?.toiOSThinkingConfig()
+    )
+}
+
+// TODO: Update FirebaseAIBridge since firebase-ios-sdk does not support audio response modality currently
+public fun ResponseModality.toiOSResponseModality(): iOSResponseModality {
+    return when (this) {
+        ResponseModality.TEXT -> iOSResponseModality("TEXT")
+        ResponseModality.IMAGE ->  iOSResponseModality("IMAGE")
+        else -> error("Unknown ResponseModality")
+    }
+}
+
+public fun ThinkingConfig.toiOSThinkingConfig(): iOSThinkingConfig? {
+    return thinkingBudget?.let {
+        iOSThinkingConfig(NSNumber(it))
+    }
+}
+
+public fun Schema.toiOSSchema(): iOSSchema {
+    return when (this.type) {
+        "BOOLEAN" -> {
+            iOSSchema.booleanWithDescription(
+                description = description,
+                nullable = nullable!!,
+                title = title
+            )
+        }
+        "INTEGER" -> {
+            if (format == "int32") {
+                iOSSchema.integerWithDescription(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum?.let { NSNumber(it) },
+                    maximum = maximum?.let { NSNumber(it) }
+                )
+            } else {
+                iOSSchema.longWithDescription(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum?.let { NSNumber(it) },
+                    maximum = maximum?.let { NSNumber(it) }
+                )
+            }
+        }
+        "NUMBER" -> {
+            if (format == "float") {
+                iOSSchema.floatWithDescription(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum?.let { NSNumber(it) },
+                    maximum = maximum?.let { NSNumber(it) }
+                )
+            } else {
+                iOSSchema.doubleWithDescription(
+                    description = description,
+                    nullable = nullable!!,
+                    title = title,
+                    minimum = minimum?.let { NSNumber(it) },
+                    maximum = maximum?.let { NSNumber(it) }
+                )
+            }
+        }
+
+        "STRING" -> {
+            if (format == "enum") {
+                iOSSchema.enumerationWithValues(
+                    values = enum!!,
+                    description = description,
+                    nullable = nullable!!,
+                    title = title
+                )
+            } else {
+                iOSSchema.stringWithDescription(
+                    description = description,
+                    nullable = nullable!!,
+                    format = format?.let { iOSStringFormat(it) },
+                    title = title,
+                )
+            }
+        }
+        "OBJECT" -> {
+            // TODO: Eventually add propertyAdding into commonMain Schema type when it has been added into firebase-android-sdk
+            iOSSchema.objectWithProperties(
+                properties = properties!!.mapValues { it.value.toiOSSchema() },
+                optionalProperties = properties.keys.filter { required!!.contains(it) != true  },
+                propertyOrdering = null,
+                description = description,
+                nullable = nullable!!,
+                title = title,
+            )
+        }
+        "ARRAY" -> {
+            iOSSchema.arrayWithItems(
+                items = items?.toiOSSchema()!!,
+                description = description,
+                nullable = nullable!!,
+                title = title,
+                minItems = minItems?.let { NSNumber(it) },
+                maxItems= maxItems?.let { NSNumber(it) }
+            )
+        }
+        "ANYOF" -> {
+            iOSSchema.anyOfSchemas(
+                schemas = anyOf?.map { it.toiOSSchema() } ?: emptyList<iOSSchema>()
+            )
+        }
+        else -> error("Unknown Schema Type")
     }
 }

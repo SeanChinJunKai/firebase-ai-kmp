@@ -3,6 +3,7 @@ package io.github.seanchinjunkai.firebase.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import kotlinx.coroutines.flow.Flow
 
 
@@ -12,11 +13,14 @@ expect object Firebase {
 
 
 expect class FirebaseAI {
-    fun generativeModel(modelName: String): GenerativeModel
+    fun generativeModel(
+        modelName: String,
+        generationConfig: GenerationConfig? = null
+    ): GenerativeModel
 }
 
 expect class GenerativeModel {
-
+    // TODO: Update to follow firebase-android-sdk's overloaded methods
     public suspend fun generateContent(prompt: String): GenerateContentResponse
 
     public fun startChat(history: List<Content> = emptyList()): Chat

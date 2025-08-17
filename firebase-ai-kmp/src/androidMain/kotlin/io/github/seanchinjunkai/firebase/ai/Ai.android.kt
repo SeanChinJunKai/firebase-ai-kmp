@@ -5,6 +5,7 @@ import com.google.firebase.ai.ai
 import io.github.seanchinjunkai.firebase.ai.type.Content
 import io.github.seanchinjunkai.firebase.ai.type.CountTokensResponse
 import io.github.seanchinjunkai.firebase.ai.type.GenerateContentResponse
+import io.github.seanchinjunkai.firebase.ai.type.GenerationConfig
 import io.github.seanchinjunkai.firebase.ai.type.UnknownException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -28,8 +29,16 @@ public actual object Firebase {
 
 actual class FirebaseAI internal constructor(internal val androidFirebaseAI: AndroidFirebaseAI) {
     // TODO: Add missing parameters
-    public actual fun generativeModel(modelName: String): GenerativeModel {
-        return GenerativeModel(androidFirebaseAI.generativeModel(modelName))
+    public actual fun generativeModel(
+        modelName: String,
+        generationConfig: GenerationConfig?,
+    ): GenerativeModel {
+        return GenerativeModel(
+            androidFirebaseAI.generativeModel(
+                modelName = modelName,
+                generationConfig = generationConfig?.toAndroidGenerationConfig()
+            )
+        )
     }
 }
 
@@ -59,7 +68,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
     public actual suspend fun generateContent(vararg prompt: Content): GenerateContentResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-            val androidResponse = androidGenerativeModel.generateContent(*input)
+            val androidResponse = androidGenerativeModel.generateContent(input.first(), *input.drop(1).toTypedArray())
             return androidResponse.toGenerateContentResponse()
         } catch (e: AndroidFirebaseAIException) {
             throw e.toFirebaseAIException()
@@ -68,7 +77,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
 
     public actual fun generateContentStream(vararg prompt: Content): Flow<GenerateContentResponse> {
         val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-        val androidFlowResponse = androidGenerativeModel.generateContentStream(*input)
+        val androidFlowResponse = androidGenerativeModel.generateContentStream(input.first(), *input.drop(1).toTypedArray())
         return androidFlowResponse
             .catch { throwable ->
                 val firebaseException = throwable as? AndroidFirebaseAIException
@@ -91,7 +100,7 @@ actual class GenerativeModel internal constructor(internal val androidGenerative
     public actual suspend fun countTokens(vararg prompt: Content): CountTokensResponse {
         try {
             val input = prompt.map { it.toAndroidContent() }.toTypedArray()
-            return androidGenerativeModel.countTokens(*input).toCountTokensResponse()
+            return androidGenerativeModel.countTokens(input.first(), *input.drop(1).toTypedArray()).toCountTokensResponse()
         } catch (e: AndroidFirebaseAIException) {
             throw e.toFirebaseAIException()
         }
