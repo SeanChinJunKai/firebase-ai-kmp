@@ -1,4 +1,5 @@
 # Unreleased
+* Add support for structured output by @SeanChinJunKai in #37
 * Improving source and abi compatibility by @SeanChinJunKai in #36
 * Add multi-turn chat functionality by @SeanChinJunKai in #30
 * Deprecate totalBillableCharacters in CountTokensResponse by @SeanChinJunKai
