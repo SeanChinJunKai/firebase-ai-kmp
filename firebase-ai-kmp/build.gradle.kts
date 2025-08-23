@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.seanchinjunkai"
-version = "0.3.0"
+version = "0.4.0"
 
 kotlin {
     androidTarget {
@@ -35,7 +35,7 @@ kotlin {
 
         pod("FirebaseAIBridge") {
             source = git("https://github.com/SeanChinJunKai/FirebaseAIBridge.git") {
-                branch = "main"
+                tag = "0.4.0"
             }
             extraOpts += listOf("-compiler-option", "-fmodules")
         }
